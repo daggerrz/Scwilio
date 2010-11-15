@@ -1,0 +1,75 @@
+package scwilio
+
+/**
+ * Defines a response to an incoming voice call.
+ */
+case class VoiceResponse(verbs: Verb*)
+
+object EmptyVoiceResponse extends VoiceResponse()
+
+object RejectResponse extends VoiceResponse(Reject.Rejected)
+
+/**
+ * Trait for all TwiML Verbs.
+ */
+trait Verb
+
+/**
+ * Dials a number. Can be used both as a op and a response.
+ */
+case class Dial(
+                 from: Phonenumber,
+                 to: Phonenumber,
+                 callbackUrl: Option[String] = None,
+                 timeout: Int = 30
+                 )
+  extends Verb
+
+/**
+ * Connects a call to a conference.
+ */
+case class ConnectToConference(
+              cid: String,
+              callbackUrl: Option[String] = None,
+              waitUrl: Option[String] = None,
+              muted: Boolean = false,
+              startOnEnter: Boolean = true,
+              endOnExit: Boolean = false
+            )
+   extends Verb
+
+/**
+ * Say something to the caller using TTS.
+ */
+case class Say(what: String, language: Language = Voice.English, voice: Voice = Voice.Man, loop: Int = 1) extends Verb
+
+/**
+ * Play an audio recording to the caller.
+ */
+case class Play(audioUrl: String, loop: Int = 1) extends Verb
+
+case class Pause(seconds: Int = 1) extends Verb
+
+case object Hangup extends Verb
+
+abstract case class Reject(reason: String) extends Verb
+
+object Reject {
+  object Busy extends Reject("busy")
+  object Rejected extends Reject("rejected")
+}
+
+abstract case class Voice(val value: String)
+
+abstract case class Language(val value: String)
+
+object Voice {
+
+  object Man extends Voice("man")
+  object Woman extends Voice("woman")
+  object English extends Language("en")
+  object Spanish extends Language("es")
+  object French extends Language("fr")
+  object German extends Language("de")
+
+}

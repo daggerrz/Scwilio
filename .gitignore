@@ -1,0 +1,8 @@
+.idea
+Scwilio.iml
+project/sbt_project_definition.iml
+lib_managed
+out
+project/boot
+project/build/target
+target
