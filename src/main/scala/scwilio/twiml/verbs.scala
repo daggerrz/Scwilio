@@ -54,7 +54,11 @@ case class Pause(seconds: Int = 1) extends Verb
 
 case object Hangup extends Verb
 
-case class Gather(finishOnKey: Char = '#', numDigits: Int = Integer.MAX_VALUE, callbackUrl: Option[String], timeout: Int = 5) extends Verb
+case class Gather(numDigits: Int = Integer.MAX_VALUE,
+                  finishOnKey: Char = '#',
+                  callbackUrl: Option[String] = None,
+                  timeout: Int = 5
+                  ) extends Verb
 
 abstract case class Reject(reason: String) extends Verb
 
