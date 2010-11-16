@@ -35,14 +35,21 @@ case class ListAvailableNumbers(countryCode: String) extends TwilioOperation[Seq
   }
 }
 
-case class DialOperation(dial: Dial) extends TwilioOperation[CallInfo] {
+case class DialOperation(
+              from: Phonenumber,
+              to: Phonenumber,
+              callbackUrl: String,
+              statusCallbackUrl: Option[String] = None,
+              timeout: Int = 30
+            ) extends TwilioOperation[CallInfo] {
 
   def request(conf: HttpConfig) = {
     var params = Map(
-      "From" -> dial.from.toStandardFormat,
-      "To" -> dial.to.toStandardFormat
+      "From" -> from.toStandardFormat,
+      "To" -> to.toStandardFormat,
+      "Url" -> callbackUrl
     )
-    dial.callbackUrl.map ( params += "Url" -> _ )
+    statusCallbackUrl.map ( params += "StatusCallback" -> _ )
 
     conf.API_BASE / "Calls" << params
   }

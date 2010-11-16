@@ -1,13 +1,15 @@
 package scwilio
 package op
 
+import Phonenumber._
+
 import org.specs.Specification
 
 object OperationsSpec extends Specification {
 
   "Error parer" should {
     "parse response correctly" in {
-      val res = TwilioClient.parseException(<TwilioResponse><RestException><Status>400</Status><Message>The source phone number provided, +4790055383 is not yet verified for this account.  You may only use caller-id numbers for which you've proven ownership.</Message><Code>21210</Code><MoreInfo>http://www.twilio.com/docs/errors/21210</MoreInfo></RestException></TwilioResponse>)
+      val res = RestClient.parseException(<TwilioResponse><RestException><Status>400</Status><Message>The source phone number provided, +4790055383 is not yet verified for this account.  You may only use caller-id numbers for which you've proven ownership.</Message><Code>21210</Code><MoreInfo>http://www.twilio.com/docs/errors/21210</MoreInfo></RestException></TwilioResponse>)
       res.code must_== "21210"
       res.message must_== "The source phone number provided, +4790055383 is not yet verified for this account.  You may only use caller-id numbers for which you've proven ownership."
     }
@@ -81,8 +83,8 @@ object OperationsSpec extends Specification {
                   </SubresourceUris>
               </Call>
             </TwilioResponse>
-      val call = new DialOperation(Dial(null, null)).parse(res)
-      call must_== CallInfo("CA5161d32bc213aa14b729535850754a07", Phonenumber("+12222222222"), Phonenumber("+1111111111"), "/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07")
+      val call = new DialOperation("+111111", "+11111", "http://localhost:8080").parse(res)
+      call must_== CallInfo("CA5161d32bc213aa14b729535850754a07", "+12222222222", "+1111111111", "/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07")
     }
   }
 

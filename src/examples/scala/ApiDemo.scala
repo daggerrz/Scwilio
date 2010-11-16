@@ -1,35 +1,45 @@
 package scwilio
+
 import op._
+import Phonenumber._
+
+import unfiltered.jetty.Server
+import unfiltered.request._
+import unfiltered.response._
 
 object ApiDemo extends Application {
 
   Twilio.accountSid = "x"
   Twilio.authToken = "x"
 
-  Twilio().execute(DialOperation(Dial(from=Phonenumber("+4790055383"), to=Phonenumber("+4790055383"))))
+  unfiltered.jetty.Http(8080).filter(unfiltered.filter.Planify {
+       case _ => Ok ~> TwiMLResponse(
+           VoiceResponse(
+             Say("Hello there!"),
+             Pause(5),
+             Say("Still waiting? kthx, bye"),
+             Hangup
+           )
+         )
+  }).start
 
-    val ourNumber = Phonenumber("+190055383")
+  val publicIp = IPTool.publicIp
 
-    Dial(ourNumber, Phonenumber("+144444444"))
+  // Firewall needs to be opened on port 8080, obviously
+  val res = Twilio().dial("+13477078794", "+4790055383", "http://" + publicIp + ":8080/", timeout = 60)
+  println(res)
 
-/*    def respond(o : DialOutcome) =
-      o.state match {
-        case Success =>
-          Some(VoiceResponse(
-            Say("Hello, forwarding you to +1333333"),
-            Dial(ourNumber, Phonenumber("+1333333"))
-          ))
-
-        case NoAnswer =>
-          println("No answer")
-          None
-
-        case Busy =>
-          println("Busy")
-          None
-
-        case Failed =>
-          println("Failed")
-          None
-      }*/
 }
+
+object IPTool {
+  def publicIp = {
+    import dispatch._
+    import scala.xml._
+    val http = new Http
+    val req = :/("ip-address.domaintools.com") / "myip.xml"
+    http(req <> { _ \\ "ip_address" text } )
+  }
+}
+
+/** Unfiltered responder for TwiML **/
+case class TwiMLResponse(vr: VoiceResponse) extends ChainResponse(ContentType("application/xml") ~> ResponseString(twiml.TwiML(vr).toString))

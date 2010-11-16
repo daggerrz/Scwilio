@@ -28,6 +28,8 @@ case class Phonenumber(countryCode: String, number: String) {
 object Phonenumber {
   def apply(number: String) = parse(number)
   def parse(string: String) = PhonenumberParser.parse(string)
+
+  implicit def string2Phonenumber(number: String) : Phonenumber = Phonenumber.apply(number)
 }
 
 /**

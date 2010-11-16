@@ -9,10 +9,14 @@ object Twilio {
   var accountSid = System.getenv("SCWILIO_ACCOUNT_SID")
   var authToken = System.getenv("SCWILIO_AUTH_TOKEN")
 
-
-  def apply() = new TwilioClient(accountSid, authToken)
+  lazy val restClient = new RestClient(accountSid, authToken)
+  lazy val client = new TwilioClient(restClient)
+  def apply() = client
 }
 
+/**
+ * Holds configuration data for the Twilio API.
+ */
 trait HttpConfig {
   val accountSid: String
   val authToken: String
@@ -21,7 +25,10 @@ trait HttpConfig {
   val http = new Http
 }
 
-class TwilioClient(val accountSid: String, val authToken: String) extends HttpConfig with util.Logging {
+/**
+ * Low level client for the Twilio API. Works with TwilioOperation instances.
+ */
+class RestClient(val accountSid: String, val authToken: String) extends HttpConfig with util.Logging {
   import scala.xml._
 
   def execute[R](op: TwilioOperation[R]) : R  = {
@@ -36,32 +43,41 @@ class TwilioClient(val accountSid: String, val authToken: String) extends HttpCo
       case e : dispatch.StatusCode =>
         val res: Elem = XML.loadString(e.contents)
         if (!(res \ "RestException").isEmpty) {
-          throw TwilioClient.parseException(res)
+          throw RestClient.parseException(res)
         } else {
           throw e
         }
 
     }
   }
-
-  def executeAsync[R](req: TwilioOperation[R], handler: (Either[R, scala.Exception]) => Unit) = null.asInstanceOf[R]
-
-  def listAvailableNumber(countryCode: String) = execute(ListAvailableNumbers(countryCode))
-
-  def getConferenceState(cid: String) = {
-    val (state, uris) = execute(GetConferenceParticipantURIs(cid))
-
-    val participants = uris.map { uri => execute(GetConferenceParticipantInfo(uri)) }
-    ConferenceState(cid, state, participants)
-  }
-
-
 }
 
-object TwilioClient {
+object RestClient {
   def parseException(res: NodeSeq) = {
     val error = res \ "RestException"
     new TwilioException((error \ "Code").text, (error \ "Message").text)
+  }
+}
+
+/**
+ * Client service interface hiding REST operation details.
+ */
+class TwilioClient(private val restClient: RestClient) {
+
+  def dial( from: Phonenumber,
+              to: Phonenumber,
+              callbackUrl: String,
+              statusCallbackUrl: Option[String] = None,
+              timeout: Int = 30
+          ) = restClient.execute(DialOperation(from, to, callbackUrl, statusCallbackUrl, timeout))
+
+  def listAvailableNumber(countryCode: String) = restClient.execute(ListAvailableNumbers(countryCode))
+
+  def getConferenceState(cid: String) = {
+    val (state, uris) = restClient.execute(GetConferenceParticipantURIs(cid))
+
+    val participants = uris.map ( uri => restClient.execute(GetConferenceParticipantInfo(uri)) )
+    ConferenceState(cid, state, participants)
   }
 }
 
