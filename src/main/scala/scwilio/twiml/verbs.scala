@@ -12,7 +12,9 @@ object RejectResponse extends VoiceResponse(Reject.Rejected)
 /**
  * Trait for all TwiML Verbs.
  */
-trait Verb
+trait Verb {
+  implicit def singleVerb2VoiceResponse(v: Verb) : VoiceResponse = VoiceResponse(v)
+}
 
 /**
  * Dials a number. Can be used both as a op and a response.
@@ -51,6 +53,8 @@ case class Play(audioUrl: String, loop: Int = 1) extends Verb
 case class Pause(seconds: Int = 1) extends Verb
 
 case object Hangup extends Verb
+
+case class Gather(finishOnKey: Char = '#', numDigits: Int = Integer.MAX_VALUE, callbackUrl: Option[String], timeout: Int = 5) extends Verb
 
 abstract case class Reject(reason: String) extends Verb
 

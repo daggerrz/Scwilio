@@ -42,6 +42,10 @@ object TwiML {
           startConferenceOnEnter={conf.startOnEnter.toString}
           endConferenceOnExit={conf.endOnExit.toString}>{conf.cid}</Conference>
       </Dial>
+    case gather: Gather =>
+        <Gather action={gather.callbackUrl.getOrElse("")}
+                finishOnKey={gather.finishOnKey.toString}
+                numDigits={gather.numDigits.toString} timeout={gather.timeout.toString}/>
 
   }
 
