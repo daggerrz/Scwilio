@@ -78,9 +78,10 @@ object OperationsSpec extends Specification {
                   </IncomingPhoneNumber>
               </TwilioResponse>
 
-      UpdateIncomingPhonenumberConfig.parse(res) must_== IncomingPhonenumber(
+      IncomingNumberParser.parse(res) must_== Seq(IncomingNumber(
         "PN2a0747eba6abf96b7e3c3ff0b4530f6e",
-        IncomingPhonenumberConfig(
+        Phonenumber("+15105647903"),
+        IncomingNumberConfig(
           Some("My Company Line"),
           Some("http://mycompany.com/handleNewCall.php"),
           None,
@@ -88,7 +89,7 @@ object OperationsSpec extends Specification {
           Some("http://mycompany.com/handleNewSms.php"),
           None
         )
-      )
+      ))
     }
   }
 

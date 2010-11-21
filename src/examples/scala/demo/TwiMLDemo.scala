@@ -2,25 +2,25 @@ package demo
 
 import unfiltered.request._
 import unfiltered.response._
-import unfiltered.jetty.{Http => Server}
 
 import scwilio._
 import scwilio.twiml._
 import scwilio.uf.TwiMLResponse._
+import scwilio.Phonenumber._
 
 
-object ApiDemo extends Application {
+object TwiMLDemo extends Application {
 
-  Twilio.accountSid = "sid"
-  Twilio.authToken = "token"
+  Twilio.accountSid = DemoConfig.accountSid
+  Twilio.authToken = DemoConfig.authToken
 
   implicit def string2Option(s: String) : Option[String] = Some(s)
 
-  Server(8080).filter(unfiltered.filter.Planify {
+  unfiltered.jetty.Http(DemoConfig.port).filter(unfiltered.filter.Planify {
        case Path("/outgoing", req) =>
            VoiceResponse(
              Say("Hello there! Please enter your 4 digit secret code followed by star"),
-             Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, callbackUrl = RelativeUrl("/digits")),
+             Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, callbackUrl = AbsoluteUrl("/digits")),
              Say("Sorry, you are too slow for us. Bye."),
              Hangup
            )
@@ -39,23 +39,12 @@ object ApiDemo extends Application {
 
 
   // Firewall needs to be opened on port 8080, obviously
-  val res = Twilio().dial("+13477078794", "+4790055383", RelativeUrl("/outgoing"), timeout = 60)
+  val res = Twilio().dial("+13477078794", "+4790055383", AbsoluteUrl("/outgoing"), timeout = 60)
   println(res)
 
 }
 
-object RelativeUrl {
-  lazy val publicIp = IPTool.publicIp
-  def apply(url: String) = "http://" + publicIp + ":8080" + url
-}
 
-object IPTool {
-  def publicIp = {
-    import dispatch._
-    import scala.xml._
-    val http = new Http
-    val req = :/("ip-address.domaintools.com") / "myip.xml"
-    http(req <> { _ \\ "ip_address" text } )
-  }
-}
+
+
 

@@ -67,12 +67,22 @@ class TwilioClient(private val restClient: RestClient) {
 
   def dial( from: Phonenumber,
               to: Phonenumber,
-              callbackUrl: String,
+              callbackUrl: Option[String],
               statusCallbackUrl: Option[String] = None,
               timeout: Int = 30
           ) = restClient.execute(DialOperation(from, to, callbackUrl, statusCallbackUrl, timeout))
 
-  def listAvailableNumber(countryCode: String) = restClient.execute(ListAvailableNumbers(countryCode))
+  /**
+   * List all purchased incoming numbers.
+   */
+  def listIncomingNumbers() = restClient.execute(ListIncomingNumbers)
+
+  /**
+   * List incoming numbers available for purchase.
+   */
+  def listAvailableNumbers(countryCode: String) = restClient.execute(ListAvailableNumbers(countryCode))
+
+  def updateIncomingNumberConfig(sid: String, config: IncomingNumberConfig) = restClient.execute(UpdateIncomingNumberConfig(sid, config))
 
   def getConferenceState(cid: String) = {
     val (state, uris) = restClient.execute(GetConferenceParticipantURIs(cid))
