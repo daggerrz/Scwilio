@@ -48,6 +48,50 @@ object OperationsSpec extends Specification {
     }
   }
 
+  "UpdateIncomingPhonenumber" should {
+    "parse response correctly" in {
+      val res= <TwilioResponse>
+                  <IncomingPhoneNumber>
+                      <Sid>PN2a0747eba6abf96b7e3c3ff0b4530f6e</Sid>
+                      <AccountSid>ACdc5f1e11047ebd6fe7a55f120be3a900</AccountSid>
+                      <FriendlyName>My Company Line</FriendlyName>
+                      <PhoneNumber>+15105647903</PhoneNumber>
+                      <VoiceUrl>http://mycompany.com/handleNewCall.php</VoiceUrl>
+                      <VoiceMethod>POST</VoiceMethod>
+                      <VoiceFallbackUrl/>
+                      <VoiceFallbackMethod>POST</VoiceFallbackMethod>
+                      <VoiceCallerIdLookup>false</VoiceCallerIdLookup>
+                      <DateCreated>Mon, 16 Aug 2010 23:00:23 +0000</DateCreated>
+                      <DateUpdated>Mon, 16 Aug 2010 23:00:23 +0000</DateUpdated>
+                      <SmsUrl>http://mycompany.com/handleNewSms.php</SmsUrl>
+                      <SmsMethod>POST</SmsMethod>
+                      <SmsFallbackUrl/>
+                      <SmsFallbackMethod>GET</SmsFallbackMethod>
+                      <Capabilities>
+                          <Voice>true</Voice>
+                          <SMS>true</SMS>
+                      </Capabilities>
+                      <StatusCallback/>
+                      <StatusCallbackMethod/>
+                      <ApiVersion>2010-04-01</ApiVersion>
+                      <Uri>/2010-04-01/Accounts/ACdc5f1e11047ebd6fe7a55f120be3a900/IncomingPhoneNumbers/PN2a0747eba6abf96b7e3c3ff0b4530f6e</Uri>
+                  </IncomingPhoneNumber>
+              </TwilioResponse>
+
+      UpdateIncomingPhonenumberConfig.parse(res) must_== IncomingPhonenumber(
+        "PN2a0747eba6abf96b7e3c3ff0b4530f6e",
+        IncomingPhonenumberConfig(
+          Some("My Company Line"),
+          Some("http://mycompany.com/handleNewCall.php"),
+          None,
+          None,
+          Some("http://mycompany.com/handleNewSms.php"),
+          None
+        )
+      )
+    }
+  }
+
   "DialOperation" should {
     "parse response correctly" in {
       val res = <TwilioResponse>
@@ -83,8 +127,7 @@ object OperationsSpec extends Specification {
                   </SubresourceUris>
               </Call>
             </TwilioResponse>
-      val call = new DialOperation("+111111", "+11111", "http://localhost:8080").parse(res)
-      call must_== CallInfo("CA5161d32bc213aa14b729535850754a07", "+12222222222", "+1111111111", "/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07")
+      DialOperation.parse(res) must_== CallInfo("CA5161d32bc213aa14b729535850754a07", "+12222222222", "+1111111111", "/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07")
     }
   }
 

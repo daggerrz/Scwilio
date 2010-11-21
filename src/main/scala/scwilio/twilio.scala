@@ -8,6 +8,7 @@ object Twilio {
 
   var accountSid = System.getenv("SCWILIO_ACCOUNT_SID")
   var authToken = System.getenv("SCWILIO_AUTH_TOKEN")
+  val API_VERSION = "2010-04-01"
 
   lazy val restClient = new RestClient(accountSid, authToken)
   lazy val client = new TwilioClient(restClient)
@@ -21,7 +22,7 @@ trait HttpConfig {
   val accountSid: String
   val authToken: String
   lazy val TWILIO_BASE = :/("api.twilio.com").secure as (accountSid, authToken)
-  lazy val API_BASE =  TWILIO_BASE / "2010-04-01" / "Accounts" / accountSid
+  lazy val API_BASE =  TWILIO_BASE / Twilio.API_VERSION / "Accounts" / accountSid
   val http = new Http
 }
 
@@ -37,7 +38,7 @@ class RestClient(val accountSid: String, val authToken: String) extends HttpConf
     try {
       http(req <> { res =>
         log.debug("Twilio response:\n{}", res)
-        op.parse(res)
+        op.parser.apply(res)
       })
     } catch {
       case e : dispatch.StatusCode =>

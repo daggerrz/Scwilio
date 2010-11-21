@@ -14,11 +14,13 @@ object ApiDemo extends Application {
   Twilio.accountSid = "sid"
   Twilio.authToken = "token"
 
+  implicit def string2Option(s: String) : Option[String] = Some(s)
+
   Server(8080).filter(unfiltered.filter.Planify {
        case Path("/outgoing", req) =>
            VoiceResponse(
              Say("Hello there! Please enter your 4 digit secret code followed by star"),
-             Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, callbackUrl = Some(RelativeUrl("/digits"))),
+             Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, callbackUrl = RelativeUrl("/digits")),
              Say("Sorry, you are too slow for us. Bye."),
              Hangup
            )

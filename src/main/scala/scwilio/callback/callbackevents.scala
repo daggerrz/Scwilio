@@ -16,7 +16,6 @@ case class IncomingCall(sid: String, from: Phonenumber, to: Phonenumber, forward
  */
 case class DialOutcome(sid: String, from: Phonenumber, to: Phonenumber, state: DialOutcomeState) extends CallbackEvent
 
-
 sealed trait CallDirection
 case object Inbound extends CallDirection
 case object Outbound extends CallDirection
