@@ -56,12 +56,12 @@ case class ListAvailableNumbers(countryCode: String) extends TwilioOperation[Seq
 }
 
 case class DialOperation(
-                          from: Phonenumber,
-                          to: Phonenumber,
-                          callbackUrl: Option[String],
-                          statusCallbackUrl: Option[String] = None,
-                          timeout: Int = 30
-                          ) extends TwilioOperation[CallInfo] {
+    from: Phonenumber,
+    to: Phonenumber,
+    callbackUrl: Option[String],
+    statusCallbackUrl: Option[String] = None,
+    timeout: Int = 30
+  ) extends TwilioOperation[CallInfo] {
 
   def request(conf: HttpConfig) = {
     var params = Map(
@@ -69,7 +69,7 @@ case class DialOperation(
       "To" -> to.toStandardFormat,
       "Url" -> callbackUrl
     )
-    statusCallbackUrl.map(params += "StatusCallback" -> _)
+    statusCallbackUrl.foreach(params += "StatusCallback" -> _)
 
     conf.API_BASE / "Calls" << params
   }
@@ -115,23 +115,23 @@ case class UpdateIncomingNumberConfig(sid: String, config: IncomingNumberConfig)
     conf.API_BASE / "IncomingPhoneNumbers" / sid << params
   }
 
-  def parser = IncomingNumberParser.parse _ andThen { _.head }
+  def parser = IncomingNumbersParser.parse _ andThen { _.head }
 }
 
-object IncomingNumberParser {
+object IncomingNumbersParser {
   import XmlPredef._
   def parse(nodes: NodeSeq) : Seq[IncomingNumber] = {
-    (nodes \\ "IncomingPhoneNumber").map { number =>
+    (nodes \\ "IncomingPhoneNumber").map { n =>
       IncomingNumber(
-        number \ "Sid",
-        Phonenumber(number \ "PhoneNumber"),
+        n \ "Sid",
+        Phonenumber(n \ "PhoneNumber"),
         IncomingNumberConfig(
-          number \ "FriendlyName",
-          number \ "VoiceUrl",
-          number \ "VoiceFallbackUrl",
-          number \ "StatusCallbackUrl",
-          number \ "SmsUrl",
-          number \ "SmsFallbackUrl"
+          n \ "FriendlyName",
+          n \ "VoiceUrl",
+          n \ "VoiceFallbackUrl",
+          n \ "StatusCallbackUrl",
+          n \ "SmsUrl",
+          n \ "SmsFallbackUrl"
         )
       )
     }
@@ -140,7 +140,7 @@ object IncomingNumberParser {
 
 case object ListIncomingNumbers extends TwilioOperation[Seq[IncomingNumber]] {
   def request(conf: HttpConfig) = conf.API_BASE / "IncomingPhoneNumbers"
-  def parser = IncomingNumberParser.parse
+  def parser = IncomingNumbersParser.parse
 }
 
 /**
@@ -153,13 +153,7 @@ case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[Tup
 
   def parse(res: NodeSeq) = {
     val conf = res \ "Conference"
-
-    (
-      (conf \ "Status").text ->
-        (conf \ "SubresourceUris" \ "Participants").map{
-          _.text
-        }
-      )
+    (conf \ "Status").text -> (conf \ "SubresourceUris" \ "Participants").map{ _.text }
   }
 }
 

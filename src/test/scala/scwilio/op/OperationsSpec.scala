@@ -78,7 +78,7 @@ object OperationsSpec extends Specification {
                   </IncomingPhoneNumber>
               </TwilioResponse>
 
-      IncomingNumberParser.parse(res) must_== Seq(IncomingNumber(
+      IncomingNumbersParser.parse(res) must_== Seq(IncomingNumber(
         "PN2a0747eba6abf96b7e3c3ff0b4530f6e",
         Phonenumber("+15105647903"),
         IncomingNumberConfig(
