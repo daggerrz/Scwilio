@@ -12,7 +12,7 @@ object RejectResponse extends VoiceResponse(Reject.Rejected)
 /**
  * Trait for all TwiML Verbs.
  */
-trait Verb {
+sealed trait Verb {
   implicit def singleVerb2VoiceResponse(v: Verb) : VoiceResponse = VoiceResponse(v)
 }
 
@@ -20,25 +20,23 @@ trait Verb {
  * Dials a number. Can be used both as a op and a response.
  */
 case class Dial(
-                 from: Phonenumber,
-                 to: Phonenumber,
-                 callbackUrl: Option[String] = None,
-                 timeout: Int = 30
-                 )
-  extends Verb
+   from: Phonenumber,
+   to: Phonenumber,
+   callbackUrl: Option[String] = None,
+   timeout: Int = 30
+ ) extends Verb
 
 /**
  * Connects a call to a conference.
  */
 case class ConnectToConference(
-              cid: String,
-              callbackUrl: Option[String] = None,
-              waitUrl: Option[String] = None,
-              muted: Boolean = false,
-              startOnEnter: Boolean = true,
-              endOnExit: Boolean = false
-            )
-   extends Verb
+    cid: String,
+    callbackUrl: Option[String] = None,
+    waitUrl: Option[String] = None,
+    muted: Boolean = false,
+    startOnEnter: Boolean = true,
+    endOnExit: Boolean = false
+  ) extends Verb
 
 /**
  * Say something to the caller using TTS.
@@ -54,11 +52,12 @@ case class Pause(seconds: Int = 1) extends Verb
 
 case object Hangup extends Verb
 
-case class Gather(numDigits: Int = Integer.MAX_VALUE,
-                  finishOnKey: Char = '#',
-                  callbackUrl: Option[String] = None,
-                  timeout: Int = 5
-                  ) extends Verb
+case class Gather(
+    numDigits: Int = Integer.MAX_VALUE,
+    finishOnKey: Char = '#',
+    callbackUrl: Option[String] = None,
+    timeout: Int = 5
+  ) extends Verb
 
 abstract case class Reject(reason: String) extends Verb
 
@@ -72,12 +71,10 @@ abstract case class Voice(val value: String)
 abstract case class Language(val value: String)
 
 object Voice {
-
   object Man extends Voice("man")
   object Woman extends Voice("woman")
   object English extends Language("en")
   object Spanish extends Language("es")
   object French extends Language("fr")
   object German extends Language("de")
-
 }

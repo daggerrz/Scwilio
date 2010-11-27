@@ -7,13 +7,20 @@ import xml._
  * Trait for all Twilio REST operation. Each operation is responsible
  * for creating the Twilio HTTP Request and parsing the results (if the
  * operation was successful).
+ *
+ * One might argue that the ops themselves should not be responsible for the plumbing,
+ * but this is simple and easy to understand, so we'll keep it like this for now.
  */
 trait TwilioOperation[R] {
+
   /**
-   * Creates the HTTP op.
+   * Create a dispatch request for the op.
    */
   def request(conf: HttpConfig): dispatch.Request
 
+  /**
+   * Return a function to parse the result for the op.
+   */
   def parser: NodeSeq => R
 }
 
@@ -40,7 +47,7 @@ protected object XmlPredef {
 }
 
 /**
- *   Defines Twilio REST operations.
+ * List available phone numbers for purchase in a given country.
  */
 case class ListAvailableNumbers(countryCode: String) extends TwilioOperation[Seq[Phonenumber]] {
   def request(conf: HttpConfig) = conf.API_BASE / "AvailablePhoneNumbers" / countryCode / "Local"
@@ -55,6 +62,9 @@ case class ListAvailableNumbers(countryCode: String) extends TwilioOperation[Seq
   }
 }
 
+/**
+ * Dial a phone number.
+ */
 case class DialOperation(
     from: Phonenumber,
     to: Phonenumber,
@@ -91,6 +101,9 @@ object DialOperation {
   }
 }
 
+/**
+ * Update the configuration for an incoming phone number.
+ */
 case class UpdateIncomingNumberConfig(sid: String, config: IncomingNumberConfig) extends TwilioOperation[IncomingNumber] {
   def request(conf: HttpConfig) = {
     var params = Map(
@@ -138,13 +151,16 @@ object IncomingNumbersParser {
   }
 }
 
+/**
+ * List all available incoming phone numbers.
+ */
 case object ListIncomingNumbers extends TwilioOperation[Seq[IncomingNumber]] {
   def request(conf: HttpConfig) = conf.API_BASE / "IncomingPhoneNumbers"
   def parser = IncomingNumbersParser.parse
 }
 
 /**
- * Gets the URIs for the participants resources in a conference
+ * Get the URIs for the participants resources in a conference.
  */
 case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[Tuple2[String, Seq[String]]] {
   def request(conf: HttpConfig) = conf.API_BASE / "Conferences" / cid
@@ -157,6 +173,9 @@ case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[Tup
   }
 }
 
+/**
+ * Get info about a particular conference participant.
+ */
 case class GetConferenceParticipantInfo(uri: String) extends TwilioOperation[Participant] {
   def request(conf: HttpConfig) = conf.TWILIO_BASE / uri
 
