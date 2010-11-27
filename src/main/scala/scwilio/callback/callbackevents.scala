@@ -7,7 +7,7 @@ package callback
 sealed trait CallbackEvent
 
 /**
- * Represents a op triggered when an incoming call arrives.
+ * Event triggered when an incoming call arrives.
  */
 case class IncomingCall(
      sid: String,
@@ -24,6 +24,22 @@ object IncomingCall {
         Phonenumber(p("To")),
         Phonenumber(p.get("ForwardedFrom"))
       )
+  }
+}
+
+/**
+ * Event triggered when an incoming SMS is received.
+ */
+case class IncomingSms(sid: String, from: Phonenumber, to: Phonenumber, body: String) extends CallbackEvent
+
+object IncomingSms {
+  def parse(p: Map[String, String]) = {
+    IncomingSms(
+      p("SmsSid"),
+      Phonenumber(p("From")),
+      Phonenumber(p("To")),
+      p("Body")
+    )
   }
 }
 
