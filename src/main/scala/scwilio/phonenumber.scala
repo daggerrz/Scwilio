@@ -26,7 +26,11 @@ case class Phonenumber(countryCode: String, number: String) {
 }
 
 object Phonenumber {
-  def apply(number: String) = parse(number)
+  def apply(number: String) : Phonenumber = parse(number)
+  def apply(number: Option[String]) : Option[Phonenumber] = number match {
+    case Some(num) => Some(parse(num))
+    case None => None
+  }
   def parse(string: String) = PhonenumberParser.parse(string)
 
   implicit def string2Phonenumber(number: String) : Phonenumber = Phonenumber.apply(number)

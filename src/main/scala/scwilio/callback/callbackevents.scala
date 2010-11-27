@@ -16,6 +16,17 @@ case class IncomingCall(
      forwardedFrom: Option[Phonenumber]
    ) extends CallbackEvent
 
+object IncomingCall {
+  def parse(p: Map[String, String]) = {
+      IncomingCall(
+        p("CallSid"),
+        Phonenumber(p("From")),
+        Phonenumber(p("To")),
+        Phonenumber(p.get("ForwardedFrom"))
+      )
+  }
+}
+
 /**
  * Represents the result of a outgoing dial operation.
  */
