@@ -2,6 +2,7 @@ package scwilio.uf
 
 import java.util.concurrent.ConcurrentHashMap
 import scwilio.callback.CallbackEvent
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Manages references between uniquely generated URLs and functions to manage
@@ -17,8 +18,11 @@ trait CallbackManager {
 }
 
 class InMemoryCallbackManager extends CallbackManager {
-  val callbacks = new java.util.concurrent.ConcurrentHashMap[String, Callback[_]]
-  private def generateUrl : String = System.currentTimeMillis.toString
+  private val callbacks = new java.util.concurrent.ConcurrentHashMap[String, Callback[_]]
+
+  private val counter = new java.util.concurrent.atomic.AtomicLong(System.currentTimeMillis)
+
+  private def generateUrl : String = counter.addAndGet(1).toString
 
   def register(f: Callback[_]) : String = {
     val url = generateUrl
