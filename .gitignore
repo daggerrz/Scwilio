@@ -1,8 +1,9 @@
 .idea
-Scwilio.iml
-project/sbt_project_definition.iml
+*.iml
+.DS_Store
 lib_managed
 out
 project/boot
 project/build/target
 target
+.DS_Store
