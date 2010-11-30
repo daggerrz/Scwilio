@@ -76,9 +76,9 @@ case class DialOperation(
   def request(conf: HttpConfig) = {
     var params = Map(
       "From" -> from.toStandardFormat,
-      "To" -> to.toStandardFormat,
-      "Url" -> callbackUrl
+      "To" -> to.toStandardFormat
     )
+    callbackUrl.foreach(params += "Url" -> _)
     statusCallbackUrl.foreach(params += "StatusCallback" -> _)
 
     conf.API_BASE / "Calls" << params

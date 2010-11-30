@@ -48,6 +48,23 @@ object IncomingSms {
  */
 case class DialOutcome(sid: String, from: Phonenumber, to: Phonenumber, state: DialOutcomeState) extends CallbackEvent
 
+object DialOutcome {
+  def parse(p: Map[String, String]) = {
+       DialOutcome(
+         p("CallSid"),
+         Phonenumber(p("From")),
+         Phonenumber(p("To")),
+         p.get("CallStatus") match {
+           case Some("in-progress") => InProgress
+           case Some("completed") => Success
+           case Some("busy") => Busy
+           case Some("no-answer") => NoAnswer
+           case _ => Failed
+         }
+       )
+   }
+}
+
 /**
  * Status of a call.
  */
@@ -62,10 +79,10 @@ case object Queued extends CallStatus
 case object Ringing extends CallStatus
 case object InProgress extends CallStatus
 
-case object Success extends CallStatus with DialOutcomeState
-case object Busy extends CallStatus with DialOutcomeState
-case object Failed extends CallStatus with DialOutcomeState
-case object NoAnswer extends CallStatus with DialOutcomeState
+case object Success extends DialOutcomeState
+case object Busy extends DialOutcomeState
+case object Failed extends DialOutcomeState
+case object NoAnswer extends DialOutcomeState
 
 sealed trait CallDirection
 case object Inbound extends CallDirection
