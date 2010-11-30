@@ -7,21 +7,29 @@ package callback
 sealed trait CallbackEvent
 
 /**
- * Event triggered when an incoming call arrives.
+ * Represents an active, ongoing call. In- or out-going.
  */
-case class IncomingCall(
+case class ActiveCall(
      sid: String,
      from: Phonenumber,
      to: Phonenumber,
+     status: CallStatus,
      forwardedFrom: Option[Phonenumber]
    ) extends CallbackEvent
 
-object IncomingCall {
+object ActiveCall {
   def parse(p: Map[String, String]) = {
-      IncomingCall(
+      ActiveCall(
         p("CallSid"),
         Phonenumber(p("From")),
         Phonenumber(p("To")),
+        p.get("CallStatus") match {
+          case Some("in-progress") => InProgress
+          case Some("queued") => Queued
+          case Some("ringing") => Ringing
+          case Some(s) => Unknown(s)
+          case None => Unknown("no status")
+        },
         Phonenumber(p.get("ForwardedFrom"))
       )
   }
@@ -46,7 +54,7 @@ object IncomingSms {
 /**
  * Represents the result of a outgoing dial operation.
  */
-case class DialOutcome(sid: String, from: Phonenumber, to: Phonenumber, state: DialOutcomeState) extends CallbackEvent
+case class DialOutcome(sid: String, from: Phonenumber, to: Phonenumber, status: DialOutcomeStatus) extends CallbackEvent
 
 object DialOutcome {
   def parse(p: Map[String, String]) = {
@@ -55,11 +63,12 @@ object DialOutcome {
          Phonenumber(p("From")),
          Phonenumber(p("To")),
          p.get("CallStatus") match {
-           case Some("in-progress") => InProgress
            case Some("completed") => Success
            case Some("busy") => Busy
            case Some("no-answer") => NoAnswer
-           case _ => Failed
+           case Some("failed") => Failed
+           case Some(s) => Unknown(s)
+           case None => Unknown("no status")
          }
        )
    }
@@ -69,20 +78,20 @@ object DialOutcome {
  * Status of a call.
  */
 sealed trait CallStatus
-
-/**
- * Call statuses which can be dial outcomes.
- */
-sealed trait DialOutcomeState extends CallStatus
-
 case object Queued extends CallStatus
 case object Ringing extends CallStatus
 case object InProgress extends CallStatus
 
-case object Success extends DialOutcomeState
-case object Busy extends DialOutcomeState
-case object Failed extends DialOutcomeState
-case object NoAnswer extends DialOutcomeState
+/**
+ * Call statuses which can be dial outcomes.
+ */
+sealed trait DialOutcomeStatus
+case object Success extends DialOutcomeStatus
+case object Busy extends DialOutcomeStatus
+case object Failed extends DialOutcomeStatus
+case object NoAnswer extends DialOutcomeStatus
+
+case class Unknown(msg: String) extends CallStatus with DialOutcomeStatus
 
 sealed trait CallDirection
 case object Inbound extends CallDirection
