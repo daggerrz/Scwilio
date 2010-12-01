@@ -1,15 +1,17 @@
 import sbt._
 
-class Project(info: ProjectInfo) extends DefaultProject(info) {
+class Project(info: ProjectInfo) extends ParentProject(info) {
 
-  override def packageSrcJar = defaultJarPath("-sources.jar")
-  val sourceArtifact = Artifact.sources(artifactID)
-  override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
+  val scalaToolsRepo = "Scala Tools Repo" at "http://scala-tools.org/repo-releases/"
+  val LOGBACK_VERSION = "0.9.24"
+  val SLF4J_VERSION = "1.6.1"
+
 
   class ScwilioModule(info: ProjectInfo) extends DefaultProject(info) {
-    val scalaToolsRepo = "Scala Tools Repo" at "http://scala-tools.org/repo-releases/"
-    val LOGBACK_VERSION = "0.9.24"
-    val SLF4J_VERSION = "1.6.1"
+
+    override def packageSrcJar = defaultJarPath("-sources.jar")
+    lazy val sourceArtifact = Artifact.sources(artifactID)
+    override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 
   }
 
@@ -31,13 +33,14 @@ class Project(info: ProjectInfo) extends DefaultProject(info) {
   }
 
   class Unfiltered(info: ProjectInfo) extends ScwilioModule(info) {
-    lazy val ufJetty = "net.databinder" %% "unfiltered-jetty" % "0.2.2"
-    lazy val ufFilter = "net.databinder" %% "unfiltered-filter" % "0.2.2"
+    lazy val ufJetty = "net.databinder" %% "unfiltered-jetty" % "0.2.3-SNAPSHOT"
+    lazy val ufFilter = "net.databinder" %% "unfiltered-filter" % "0.2.3-SNAPSHOT"
 
   }
 
   class Examples(info: ProjectInfo) extends ScwilioModule(info) {
 
   }
+
 }
 
