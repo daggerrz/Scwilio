@@ -69,8 +69,9 @@ class TwilioClient(private val restClient: RestClient) {
               to: Phonenumber,
               callbackUrl: Option[String],
               statusCallbackUrl: Option[String] = None,
-              timeout: Int = 30
-          ) = restClient.execute(DialOperation(from, to, callbackUrl, statusCallbackUrl, timeout))
+              timeout: Int = 30,
+              machineDetection: Boolean = false
+          ) = restClient.execute(DialOperation(from, to, callbackUrl, statusCallbackUrl, timeout, machineDetection))
 
   /**
    * List all purchased incoming numbers.

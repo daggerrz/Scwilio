@@ -64,13 +64,22 @@ case class ListAvailableNumbers(countryCode: String) extends TwilioOperation[Seq
 
 /**
  * Dial a phone number.
+ *
+ * <b>Note:<b> We do not support IfMachine -> Hangup as this breaks
+ * our state management. If Hangup were allowed,
+ * we would get "active call" callbacks with state Completed
+ * which is weird, and we would also not get a callback when the call
+ * is completed which is inconsistent. If machine detection is used,
+ * the response function must check the answeredBy field and rather
+ * issue a Hangup manually.
  */
 case class DialOperation(
     from: Phonenumber,
     to: Phonenumber,
     callbackUrl: Option[String],
     statusCallbackUrl: Option[String] = None,
-    timeout: Int = 30
+    timeout: Int = 30,
+    machineDetection: Boolean = false
   ) extends TwilioOperation[CallInfo] {
 
   def request(conf: HttpConfig) = {
@@ -80,6 +89,8 @@ case class DialOperation(
     )
     callbackUrl.foreach(params += "Url" -> _)
     statusCallbackUrl.foreach(params += "StatusCallback" -> _)
+    if (machineDetection) params += "IfMachine" -> "Continue"
+
 
     conf.API_BASE / "Calls" << params
   }
@@ -102,7 +113,7 @@ object DialOperation {
 }
 
 /**
- * Update the configuration for an incoming phone number.
+ *  Update the configuration for an incoming phone number.
  */
 case class UpdateIncomingNumberConfig(sid: String, config: IncomingNumberConfig) extends TwilioOperation[IncomingNumber] {
   def request(conf: HttpConfig) = {
