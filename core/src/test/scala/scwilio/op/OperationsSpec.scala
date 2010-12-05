@@ -131,7 +131,28 @@ object OperationsSpec extends Specification {
       DialOperation.parse(res) must_== CallInfo("CA5161d32bc213aa14b729535850754a07", "+12222222222", "+1111111111", "/2010-04-01/Accounts/ACCOUNT_SID/Calls/CA5161d32bc213aa14b729535850754a07")
     }
   }
-
+  "SendSms" should {
+    "parse response correctly" in {
+      val res = <TwilioResponse>
+            <SMSMessage>
+                <Sid>SM90c6fc909d8504d45ecdb3a3d5b3556e</Sid>
+                <DateCreated>Wed, 18 Aug 2010 20:01:40 +0000</DateCreated>
+                <DateUpdated>Wed, 18 Aug 2010 20:01:40 +0000</DateUpdated>
+                <DateSent/>
+                <AccountSid>AC5ef872f6da5a21de157d80997a64bd33</AccountSid>
+                <To>+14159352345</To>
+                <From>+14158141829</From>
+                <Body>Jenny please?!</Body>
+                <Status>queued</Status>
+                <Direction>outbound-api</Direction>
+                <ApiVersion>2010-04-01</ApiVersion>
+                <Price/>
+                <Uri>/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages/SM90c6fc909d8504d45ecdb3a3d5b3556e</Uri>
+            </SMSMessage>
+        </TwilioResponse>
+      SendSms.parse(res) must_== SmsInfo("SM90c6fc909d8504d45ecdb3a3d5b3556e", "+14158141829", "+14159352345", "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/SMS/Messages/SM90c6fc909d8504d45ecdb3a3d5b3556e")
+    }
+  }
   "TWGetConferenceState" should {
     "parse response correctly" in {
       val res = <TwilioResponse>

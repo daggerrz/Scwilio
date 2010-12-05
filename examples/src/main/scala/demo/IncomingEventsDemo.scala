@@ -8,13 +8,13 @@ import unfiltered.request._
 
 object IncomingEventsDemo extends Application {
 
-  val tw = new TwilioClient(new RestClient(DemoConfig.accountSid, DemoConfig.authToken))
+  val client = new TwilioClient(new RestClient(DemoConfig.accountSid, DemoConfig.authToken))
 
   val url = AbsoluteUrl("/incoming/voice")
 
   // Dangerous operation. Commented out for safety.
-  tw.listIncomingNumbers().foreach { n =>
-    tw.updateIncomingNumberConfig(n.sid, IncomingNumberConfig(voiceUrl = url))
+  client.listIncomingNumbers().foreach { n =>
+    client.updateIncomingNumberConfig(n.sid, IncomingNumberConfig(voiceUrl = url))
     println(n.number + " is now routed to " + url.get)
   }
 

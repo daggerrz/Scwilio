@@ -112,6 +112,35 @@ object DialOperation {
   }
 }
 
+case class SendSms(from: Phonenumber, to: Phonenumber, body: String) extends TwilioOperation[SmsInfo] {
+  def request(conf: HttpConfig) = {
+    val params = Map(
+      "From" -> from.toStandardFormat,
+      "To" -> to.toStandardFormat,
+      "Body" -> body
+    )
+    conf.API_BASE / "SMS" / "Messages" << params
+  }
+
+  def parser = SendSms.parse
+}
+
+object SendSms {
+  import XmlPredef._
+
+  def parse(res: NodeSeq) = {
+    val msg = res \ "SMSMessage"
+    SmsInfo(
+      msg \ "Sid",
+      Phonenumber(msg \ "From"),
+      Phonenumber.parse(msg \ "To"),
+      msg \ "Uri"
+    )
+
+  }
+
+}
+
 /**
  *  Update the configuration for an incoming phone number.
  */

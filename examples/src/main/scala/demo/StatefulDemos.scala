@@ -78,9 +78,9 @@ object StatefulDialDemo extends Application {
   // Unfiltered HTTP callbacks.
   import phone.URLMaker._
 
-  val tw = new TwilioClient(new RestClient(DemoConfig.accountSid, DemoConfig.authToken))
+  val client = new TwilioClient(new RestClient(DemoConfig.accountSid, DemoConfig.authToken))
 
-  tw.dial("+13477078794", "+4790055383",
+  client.dial(from = "+13477078794", to = "+4790055383",
     onConnect = (call: ActiveCall) => call.answeredBy match {
       case Some(Machine) =>
         println("Argh! Machine! Hanging up.")

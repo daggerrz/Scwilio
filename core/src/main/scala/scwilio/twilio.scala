@@ -13,6 +13,7 @@ object Twilio {
   lazy val restClient = new RestClient(accountSid, authToken)
   lazy val client = new TwilioClient(restClient)
   def apply() = client
+  def apply(accountSid: String, authToken: String) = new TwilioClient(new RestClient(accountSid, authToken))
 }
 
 /**
@@ -72,6 +73,10 @@ class TwilioClient(private val restClient: RestClient) {
            timeout: Int = 30,
            machineDetection: Boolean = false
           ) : CallInfo = restClient.execute(DialOperation(from, to, onConnect, onEnd, timeout, machineDetection))
+
+  def sendSms(from: Phonenumber,
+              to: Phonenumber,
+              body: String) : SmsInfo = restClient.execute(SendSms(from, to, body))
 
   /**
    * List all purchased incoming numbers.
