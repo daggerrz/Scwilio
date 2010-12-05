@@ -18,7 +18,7 @@ object OperationsSpec extends Specification {
   "ListAvailablePhonenumbers handler" should {
     "parse response correctly" in {
       val res = <TwilioResponse>
-                  <AvailablePhoneNumbers uri="/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/AvailablePhoneNumbers/US/Local">
+                  <AvailablePhoneNumbers uri="/2010-04-01/Accounts/ACCOUNT_SID/AvailablePhoneNumbers/US/Local">
                       <AvailablePhoneNumber>
                           <FriendlyName>(978) 522-6522</FriendlyName>
                           <PhoneNumber>+19785226522</PhoneNumber>
@@ -101,7 +101,7 @@ object OperationsSpec extends Specification {
                   <DateCreated>Thu, 21 Oct 2010 20:38:22 +0000</DateCreated>
                   <DateUpdated>Thu, 21 Oct 2010 20:38:22 +0000</DateUpdated>
                   <ParentCallSid/>
-                  <AccountSid>AC2b49338c7d9ae05032f5711d8f7f59dc</AccountSid>
+                  <AccountSid>ACCOUNT_SID</AccountSid>
                   <To>+1111111111</To>
                   <From>+12222222222</From>
                   <PhoneNumberSid>PN349e00efa7d0e743e3283a8170469d84</PhoneNumberSid>
@@ -117,18 +117,18 @@ object OperationsSpec extends Specification {
                   <ForwardedFrom/>
                   <GroupSid/>
                   <CallerName/>
-                  <Uri>/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07</Uri>
+                  <Uri>/2010-04-01/Accounts/ACCOUNT_SID/Calls/CA5161d32bc213aa14b729535850754a07</Uri>
                   <SubresourceUris>
                       <Notifications>
-                          /2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07/Notifications
+                          /2010-04-01/Accounts/ACCOUNT_SID/Calls/CA5161d32bc213aa14b729535850754a07/Notifications
                       </Notifications>
                       <Recordings>
-                          /2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07/Recordings
+                          /2010-04-01/Accounts/ACCOUNT_SID/Calls/CA5161d32bc213aa14b729535850754a07/Recordings
                       </Recordings>
                   </SubresourceUris>
               </Call>
             </TwilioResponse>
-      DialOperation.parse(res) must_== CallInfo("CA5161d32bc213aa14b729535850754a07", "+12222222222", "+1111111111", "/2010-04-01/Accounts/AC2b49338c7d9ae05032f5711d8f7f59dc/Calls/CA5161d32bc213aa14b729535850754a07")
+      DialOperation.parse(res) must_== CallInfo("CA5161d32bc213aa14b729535850754a07", "+12222222222", "+1111111111", "/2010-04-01/Accounts/ACCOUNT_SID/Calls/CA5161d32bc213aa14b729535850754a07")
     }
   }
 

@@ -15,7 +15,8 @@ case class ActiveCall(
      to: Phonenumber,
      status: CallStatus,
      forwardedFrom: Option[Phonenumber],
-     answeredBy: Option[AnsweredBy]
+     answeredBy: Option[AnsweredBy],
+     digits: Option[String]
    ) extends CallbackEvent
 
 object ActiveCall {
@@ -37,8 +38,8 @@ object ActiveCall {
           case Some("machine") => Some(Machine)
           case Some(s) => Some(Unknown(s))
           case None => None
-        }
-
+        },
+        p.get("Digits")
       )
   }
 }

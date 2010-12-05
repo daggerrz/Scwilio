@@ -1,7 +1,7 @@
 package scwilio
 package uf
 
-object Params {
+object Helpers {
 
   /**
    * Extracts the first param of a parameter map and filters empty parameters.

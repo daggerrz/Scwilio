@@ -25,7 +25,7 @@ object Verb {
 case class Dial(
    from: Phonenumber,
    to: Phonenumber,
-   callbackUrl: Option[String] = None,
+   onConnect: Option[String] = None,
    timeout: Int = 30
  ) extends Verb
 
@@ -34,8 +34,8 @@ case class Dial(
  */
 case class ConnectToConference(
     cid: String,
-    onLeaveUrl: Option[String] = None,
-    waitUrl: Option[String] = None,
+    onLeave: Option[String] = None,
+    onWait: Option[String] = None,
     muted: Boolean = false,
     startOnEnter: Boolean = true,
     endOnExit: Boolean = false
@@ -60,7 +60,7 @@ case object Hangup extends Verb
 case class Gather(
     numDigits: Int = Integer.MAX_VALUE,
     finishOnKey: Char = '#',
-    callbackUrl: Option[String] = None,
+    onGathered: Option[String] = None,
     timeout: Int = 5
   ) extends Verb
 

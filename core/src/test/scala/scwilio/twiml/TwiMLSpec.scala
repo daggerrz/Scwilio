@@ -14,9 +14,9 @@ object TwiMLSpec extends Specification {
           Pause(),
           Play("http://foo.com/cowbell.mp3"),
           Say("Goodbye"),
-          Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), callbackUrl = Some("http://test")),
+          Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onConnect = Some("http://test")),
           ConnectToConference("cid", Some("http://callback"), Some("http://wait"), muted = false, startOnEnter = false, endOnExit = false ),
-          Gather(timeout = 30, finishOnKey = '*', numDigits = 4, callbackUrl = Some("http://digits")),
+          Gather(timeout = 30, finishOnKey = '*', numDigits = 4, onGathered = Some("http://digits")),
           Redirect("http://foo.com/")
 
       )

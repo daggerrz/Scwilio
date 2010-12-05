@@ -1,9 +1,20 @@
 package demo
 
+import java.util.Properties
+import java.io.{File, IOException, FileInputStream}
 
 object DemoConfig {
-  val accountSid: String = "AC2b49338c7d9ae05032f5711d8f7f59dc"
-  val authToken: String = "ded3843752d1361aaa4c2e79a6458bc1"
-
+  val props = new java.util.Properties
+  var accountSid: String = _
+  var authToken: String = _
+  try {
+    props.load(new FileInputStream("scwilio.properties"))
+    accountSid = props.getProperty("SID")
+    authToken = props.getProperty("AuthToken")
+  } catch {
+    case e: IOException =>
+      println("Please update " + new File("scwilo.properties").getAbsolutePath + " with SID and AuthToken keys in the current directory.")
+      System.exit(0)
+  }
   val port = 8080
 }

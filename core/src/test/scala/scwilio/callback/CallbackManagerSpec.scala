@@ -1,13 +1,12 @@
 package scwilio
-package uf
+package callback
 
-import callback._
 
 import org.specs.Specification
 
-class StateManagerSpec extends Specification {
+class CallbackManagerSpec extends Specification {
 
-  val sm = new InMemoryCallbackManager
+  val sm = new AnyRef with InMemoryCallbackManager
   val printer = (oc: DialOutcome) => { println(oc) }
 
   "StateManager" should {

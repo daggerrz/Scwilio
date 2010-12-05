@@ -65,13 +65,13 @@ object RestClient {
  */
 class TwilioClient(private val restClient: RestClient) {
 
-  def dial( from: Phonenumber,
-              to: Phonenumber,
-              callbackUrl: Option[String],
-              statusCallbackUrl: Option[String] = None,
-              timeout: Int = 30,
-              machineDetection: Boolean = false
-          ) : CallInfo = restClient.execute(DialOperation(from, to, callbackUrl, statusCallbackUrl, timeout, machineDetection))
+  def dial(from: Phonenumber,
+           to: Phonenumber,
+           onConnect: Option[String],
+           onEnd: Option[String] = None,
+           timeout: Int = 30,
+           machineDetection: Boolean = false
+          ) : CallInfo = restClient.execute(DialOperation(from, to, onConnect, onEnd, timeout, machineDetection))
 
   /**
    * List all purchased incoming numbers.

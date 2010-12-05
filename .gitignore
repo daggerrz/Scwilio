@@ -7,3 +7,4 @@ project/boot
 project/build/target
 target
 .DS_Store
+scwilio.properties

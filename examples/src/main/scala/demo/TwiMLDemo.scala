@@ -20,7 +20,7 @@ object TwiMLDemo extends Application {
        case Path("/outgoing", req) =>
            VoiceResponse(
              Say("Hello there! Please enter your 4 digit secret code followed by star"),
-             Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, callbackUrl = AbsoluteUrl("/digits")),
+             Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, onGathered = AbsoluteUrl("/digits")),
              Say("Sorry, you are too slow for us. Bye."),
              Hangup
            )
