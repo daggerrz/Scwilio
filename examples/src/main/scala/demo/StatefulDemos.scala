@@ -94,7 +94,8 @@ object StatefulDialDemo extends Application {
         )
       },
     onEnd = (outcome : DialOutcome) =>
-      println("Call " + outcome + " ended after " + outcome.duration + " seconds")
+      println("Call " + outcome + " ended after " + outcome.duration + " seconds"),
+    machineDetection = true
   )
 
 }

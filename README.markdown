@@ -63,7 +63,9 @@ can be removed completely. This allows for code like this:
             )
           },
         onEnd = (outcome : DialOutcome) =>
-          println("Call " + outcome + " ended after " + outcome.duration + " seconds")
+          println("Call " + outcome + " ended after " + outcome.duration + " seconds"),
+        machineDetection = true
+
     )
 
 Pretty neat, right?
