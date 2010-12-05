@@ -50,20 +50,20 @@ can be removed completely. This allows for code like this:
     val client = new TwilioClient(new RestClient(DemoConfig.accountSid, DemoConfig.authToken))
 
     client.dial(from = "+13477078794", to = "+4790055383",
-    onConnect = (call: ActiveCall) => call.answeredBy match {
-      case Some(Machine) =>
-        println("Argh! Machine! Hanging up.")
-        VoiceResponse(Hangup)
-      case _ =>
-        VoiceResponse(
-          Say("This is an automated call. Nothing to hear here."),
-          Pause(10),
-          Say("Really!"),
-          Hangup
-        )
-      },
-    onEnd = (outcome : DialOutcome) =>
-      println("Call " + outcome + " ended after " + outcome.duration + " seconds")
+        onConnect = (call: ActiveCall) => call.answeredBy match {
+          case Some(Machine) =>
+            println("Argh! Machine! Hanging up.")
+            VoiceResponse(Hangup)
+          case _ =>
+            VoiceResponse(
+              Say("This is an automated call. Nothing to hear here."),
+              Pause(10),
+              Say("Really!"),
+              Hangup
+            )
+          },
+        onEnd = (outcome : DialOutcome) =>
+          println("Call " + outcome + " ended after " + outcome.duration + " seconds")
     )
 
 Pretty neat, right?
@@ -90,7 +90,6 @@ service using a `Phone` implementation using the Unfiltered web framework (see S
 
       // Validate the pin and connect the user to a conference.
       def connectToConference(call: ActiveCall) : VoiceResponse = {
-
         call.digits match {
           case Some(confId) if confId.length != 4 =>
             VoiceResponse(
