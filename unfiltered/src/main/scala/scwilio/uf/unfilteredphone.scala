@@ -31,11 +31,9 @@ class UnfilteredPhone(val absoluteUrlBase: String, val port: Int) extends Phone 
         handleNoParam(fid)
 
       case POST(Path(Seg("callback" :: "callconnected" :: fid :: Nil), Params(p, _))) =>
-        log.info("Connected params " + p)
         handleCallStatus(fid, ActiveCall.parse(p))
 
       case POST(Path(Seg("callback" :: "callended" :: fid :: Nil), Params(p, _))) =>
-        log.info("End params " + p)
         handleCallEnded(fid, DialOutcome.parse(p))
         Ok
 

@@ -9,18 +9,22 @@ import util._
  * callback functions. See scwilio.uf.Server for an example.
  */
 trait Phone { self: CallbackManager with Logging =>
+
+  /**
+   * Set this to handle incoming calls.
+   */
+  var incomingCallHandler: Option[(ActiveCall) => VoiceResponse] = None
+
   /**
    * Called when an incoming call arrives.
    */
   def handleIncomingCall(call: ActiveCall) : VoiceResponse = {
-    log.debug("Incoming call " + call)
+    log.debug("Incoming call: " + call)
     incomingCallHandler match {
       case Some(f) => f.apply(call)
       case _ => Say("Hello, thanks for calling, but incoming calls are not supported by this server.")
     }
   }
-
-  var incomingCallHandler: Option[(ActiveCall) => VoiceResponse] = None
 
   /**
    * Called when a no-param callback is invoked. An example is waitUrl for conference calls.
@@ -33,10 +37,10 @@ trait Phone { self: CallbackManager with Logging =>
   }
 
   /**
-   * Called when an outgoing call connects.
+   * Callback for active calls.
    */
   def handleCallStatus(fid: String, call: ActiveCall) : VoiceResponse = {
-    log.debug("Call status " + call)
+    log.debug("Call connected: " + call)
     getAndRemove[ActiveCall, VoiceResponse](fid) match {
       case Some(callback) => callback.apply(call)
       case _ => Say("Sorry, an error has occured. Do not know how to handle this call.")
@@ -44,9 +48,10 @@ trait Phone { self: CallbackManager with Logging =>
   }
 
   /**
-   * Called when an outgoing call ends.
+   * Callback when a call ends.
    */
   def handleCallEnded(fid: String, outcome: DialOutcome) : Unit = {
+    log.debug("Call ended: " + outcome)
     getAndRemove[DialOutcome, VoiceResponse](fid) match {
       case Some(callback) => callback.apply(outcome)
       case _ => log.warn("No handler for call end " + fid)
