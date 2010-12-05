@@ -54,7 +54,7 @@ object PhonenumberParser {
 		if (number == null)
 			throw new IllegalArgumentException("number cannot be null")
     if (!number.matches("[\\+]?[\\d]+"))
-      throw new IllegalArgumentException("number must not contain alphanumeric digits. (" + number + ")")
+      throw new IllegalArgumentException("number must contain digits and an optional international prefix only. (" + number + ")")
 
 		val trimmed = number.replaceAll("\\s", "")
 		if (trimmed.length() == 0)

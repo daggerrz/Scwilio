@@ -1,4 +1,5 @@
 package scwilio
+package twiml
 
 /**
  * Defines a response to an incoming voice call.
@@ -12,7 +13,9 @@ object RejectResponse extends VoiceResponse(Reject.Rejected)
 /**
  * Trait for all TwiML Verbs.
  */
-sealed trait Verb {
+sealed trait Verb
+
+object Verb {
   implicit def singleVerb2VoiceResponse(v: Verb) : VoiceResponse = VoiceResponse(v)
 }
 
@@ -31,7 +34,7 @@ case class Dial(
  */
 case class ConnectToConference(
     cid: String,
-    callbackUrl: Option[String] = None,
+    onLeaveUrl: Option[String] = None,
     waitUrl: Option[String] = None,
     muted: Boolean = false,
     startOnEnter: Boolean = true,
@@ -49,6 +52,8 @@ case class Say(what: String, language: Language = Voice.English, voice: Voice = 
 case class Play(audioUrl: String, loop: Int = 1) extends Verb
 
 case class Pause(seconds: Int = 1) extends Verb
+
+case class Redirect(to: String) extends Verb
 
 case object Hangup extends Verb
 

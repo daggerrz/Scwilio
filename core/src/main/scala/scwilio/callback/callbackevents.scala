@@ -67,8 +67,8 @@ case class DialOutcome(
     from: Phonenumber,
     to: Phonenumber,
     status: DialOutcomeStatus,
-    answeredBy: Option[AnsweredBy]
-
+    answeredBy: Option[AnsweredBy],
+    duration: Int
   ) extends CallbackEvent
 
 object DialOutcome {
@@ -90,7 +90,8 @@ object DialOutcome {
            case Some("machine") => Some(Machine)
            case Some(s) => Some(Unknown(s))
            case None => None
-         }
+         },
+        p.get("CallDuration") getOrElse("0") toInt
        )
    }
 }

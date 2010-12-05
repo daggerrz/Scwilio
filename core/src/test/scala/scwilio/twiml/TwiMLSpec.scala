@@ -16,7 +16,8 @@ object TwiMLSpec extends Specification {
           Say("Goodbye"),
           Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), callbackUrl = Some("http://test")),
           ConnectToConference("cid", Some("http://callback"), Some("http://wait"), muted = false, startOnEnter = false, endOnExit = false ),
-          Gather(timeout = 30, finishOnKey = '*', numDigits = 4, callbackUrl = Some("http://digits"))
+          Gather(timeout = 30, finishOnKey = '*', numDigits = 4, callbackUrl = Some("http://digits")),
+          Redirect("http://foo.com/")
 
       )
 
@@ -33,6 +34,7 @@ object TwiMLSpec extends Specification {
              <Conference waitUrl="http://wait" muted="false" startConferenceOnEnter="false" endConferenceOnExit="false">cid</Conference>
            </Dial>
            <Gather action="http://digits" finishOnKey="*" numDigits="4" timeout="30"/>
+           <Redirect>http://foo.com/</Redirect>
         </Response>)
 
     }

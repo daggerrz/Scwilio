@@ -36,7 +36,7 @@ object TwiML {
              timeout={dial.timeout.toString}>{dial.to.toStandardFormat}</Dial>
 
     case conf: ConnectToConference =>
-      <Dial action={conf.callbackUrl.getOrElse("")}>
+      <Dial action={conf.onLeaveUrl.getOrElse("")}>
         <Conference waitUrl={conf.waitUrl.getOrElse("")}
           muted={conf.muted.toString}
           startConferenceOnEnter={conf.startOnEnter.toString}
@@ -46,7 +46,8 @@ object TwiML {
         <Gather action={gather.callbackUrl.getOrElse("")}
                 finishOnKey={gather.finishOnKey.toString}
                 numDigits={gather.numDigits.toString} timeout={gather.timeout.toString}/>
-
+    case redirect: Redirect =>
+        <Redirect>{redirect.to}</Redirect>
   }
 
 }

@@ -14,10 +14,11 @@ class CallbackEventsSpec extends Specification {
         "To" -> "+15555",
         "CallStatus" -> "ringing",
         "Direction" -> "inbound",
-        "ForwardedFrom" -> "+14444"
+        "ForwardedFrom" -> "+14444",
+        "AnsweredBy" -> "human"
       )
 
-      ActiveCall.parse(params) must_== ActiveCall("sid", Phonenumber("+4790055383"), Phonenumber("+15555"), Ringing, Some(Phonenumber("+14444")))
+      ActiveCall.parse(params) must_== ActiveCall("sid", Phonenumber("+4790055383"), Phonenumber("+15555"), Ringing, Some(Phonenumber("+14444")), Some(Human))
     }
   }
  "IncomingSms" should {
