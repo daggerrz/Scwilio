@@ -103,16 +103,13 @@ service using a `Phone` implementation using the Unfiltered web framework (see S
               Say("Connecting you to conference " + confId.mkString(", ")),
               ConnectToConference(confId,
                 onLeave = (call : DialOutcome) => println("Caller " + call + " left the conference"),
-                onWait = { pleaseWait }
-              )
-            )
           case None => VoiceResponse(Say("Sorry, dunno how you got here"), Hangup)
         }
       }
 
       // Say something to the user while waiting for the conference to begin.
       // Demonstrates stateful callbacks.
-      def pleaseWait: () => VoiceResponse = {
+      def pleaseWait() : VoiceResponse = {
         var redirects = 0
         def waitInfo() : VoiceResponse = {
           redirects += 1
@@ -121,11 +118,9 @@ service using a `Phone` implementation using the Unfiltered web framework (see S
             Redirect(waitInfo _)
           )
         }
-        waitInfo _
+        waitInfo
       }
-
       phone.incomingCallHandler = Some(selectConference _)
-
     }
 
 ## Actor API

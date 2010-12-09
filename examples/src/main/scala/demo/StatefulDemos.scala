@@ -45,7 +45,7 @@ object ConferenceDemo extends Application with Logging {
           Say("Connecting you to conference " + confId.mkString(", ")),
           ConnectToConference(confId,
             onLeave = (call : CompletedCall) => println("Caller " + call + " left the conference"),
-            onWait = { pleaseWait }
+            onWait = pleaseWait _
           )
         )
       case None => VoiceResponse(Say("Sorry, dunno how you got here"), Hangup)
@@ -54,7 +54,7 @@ object ConferenceDemo extends Application with Logging {
 
   // Say something to the user while waiting for the conference to begin.
   // Demonstrates stateful callbacks.
-  def pleaseWait: () => VoiceResponse = {
+  def pleaseWait() : VoiceResponse = {
     var redirects = 0
     def waitInfo() : VoiceResponse = {
       redirects += 1
@@ -63,7 +63,7 @@ object ConferenceDemo extends Application with Logging {
         Redirect(waitInfo _)
       )
     }
-    waitInfo _
+    waitInfo
   }
 
   phone.incomingCallHandler = Some(selectConference _)
