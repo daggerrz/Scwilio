@@ -1,10 +1,7 @@
 package scwilio
 package callback
 
-import scwilio.callback._
 import scwilio.twiml._
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
 
 object functions {
   type CallbackFunc[T <: CallbackEvent, R] = (T) => R
