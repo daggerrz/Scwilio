@@ -8,7 +8,8 @@ object functions {
   type ActiveCallFunc = (ActiveCall) => VoiceResponse
   type DialOutcomeFunc = (CompletedCall) => Unit
 
-  // TODO: This is a hack. Should have a noop or CID-only callback
+  // TODO: This is a hack. Used for waitUrl in ConnectToConfernce (which gives no params)
+  // Should have a noop or CID-only callback
   type NoParamCallbackFunc = (ActiveCall) => VoiceResponse
 
 }
