@@ -7,7 +7,7 @@ import org.specs.Specification
 class CallbackManagerSpec extends Specification {
 
   val sm = new AnyRef with InMemoryCallbackManager
-  val printer = (oc: DialOutcome) => { println(oc) }
+  val printer = (oc: CompletedCall) => { println(oc) }
 
   "StateManager" should {
     "Register a callback function and return a (unique) URL" in {

@@ -50,9 +50,9 @@ trait Phone { self: CallbackManager with Logging =>
   /**
    * Callback when a call ends.
    */
-  def handleCallEnded(fid: String, outcome: DialOutcome) : Unit = {
+  def handleCallEnded(fid: String, outcome: CompletedCall) : Unit = {
     log.debug("Call ended: " + outcome)
-    getAndRemove[DialOutcome, VoiceResponse](fid) match {
+    getAndRemove[CompletedCall, VoiceResponse](fid) match {
       case Some(callback) => callback.apply(outcome)
       case _ => log.warn("No handler for call end " + fid)
     }

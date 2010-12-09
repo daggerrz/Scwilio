@@ -44,7 +44,7 @@ object ConferenceDemo extends Application with Logging {
         VoiceResponse(
           Say("Connecting you to conference " + confId.mkString(", ")),
           ConnectToConference(confId,
-            onLeave = (call : DialOutcome) => println("Caller " + call + " left the conference"),
+            onLeave = (call : CompletedCall) => println("Caller " + call + " left the conference"),
             onWait = { pleaseWait }
           )
         )
@@ -93,7 +93,7 @@ object StatefulDialDemo extends Application {
           Hangup
         )
       },
-    onEnd = (outcome : DialOutcome) =>
+    onEnd = (outcome : CompletedCall) =>
       println("Call " + outcome + " ended after " + outcome.duration + " seconds"),
     machineDetection = true
   )

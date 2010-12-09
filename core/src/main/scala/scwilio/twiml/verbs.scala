@@ -44,7 +44,7 @@ case class ConnectToConference(
 /**
  * Say something to the caller using TTS.
  */
-case class Say(what: String, language: Language = Voice.English, voice: Voice = Voice.Man, loop: Int = 1) extends Verb
+case class Say(what: String, language: Language = Language.English, voice: Voice = Voice.Man, loop: Int = 1) extends Verb
 
 /**
  * Play an audio recording to the caller.
@@ -71,13 +71,16 @@ object Reject {
   object Rejected extends Reject("rejected")
 }
 
-abstract case class Voice(val value: String)
+abstract case class Voice(value: String)
 
-abstract case class Language(val value: String)
+abstract case class Language(value: String)
 
 object Voice {
   object Man extends Voice("man")
   object Woman extends Voice("woman")
+}
+
+object Language {
   object English extends Language("en")
   object Spanish extends Language("es")
   object French extends Language("fr")

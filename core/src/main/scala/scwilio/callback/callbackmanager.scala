@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong
 object functions {
   type CallbackFunc[T <: CallbackEvent, R] = (T) => R
   type ActiveCallFunc = (ActiveCall) => VoiceResponse
-  type DialOutcomeFunc = (DialOutcome) => Unit
+  type DialOutcomeFunc = (CompletedCall) => Unit
 
   // TODO: This is a hack. Should have a noop or CID-only callback
   type NoParamCallbackFunc = (ActiveCall) => VoiceResponse

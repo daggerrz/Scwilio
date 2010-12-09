@@ -1,6 +1,5 @@
 package demo
 
-import java.util.Properties
 import java.io.{File, IOException, FileInputStream}
 
 object DemoConfig {
@@ -17,4 +16,5 @@ object DemoConfig {
       System.exit(0)
   }
   val port = 8080
+
 }

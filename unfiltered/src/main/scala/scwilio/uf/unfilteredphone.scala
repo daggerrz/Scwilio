@@ -34,7 +34,7 @@ class UnfilteredPhone(val absoluteUrlBase: String, val port: Int) extends Phone 
         handleCallStatus(fid, ActiveCall.parse(p))
 
       case POST(Path(Seg("callback" :: "callended" :: fid :: Nil), Params(p, _))) =>
-        handleCallEnded(fid, DialOutcome.parse(p))
+        handleCallEnded(fid, CompletedCall.parse(p))
         Ok
 
     }

@@ -2,22 +2,39 @@ package scwilio
 package callback
 
 /**
- * Trait for all Twilio callback events.
+ * Trait for all Twilio triggered callback events such.
  */
 sealed trait CallbackEvent
 
 /**
- * Represents an active, ongoing call. In- or out-going.
+ * Represent a call, active or completed. As active and completed
+ * are quite different, they share this trait instead of concrete
+ * implementations instead of having a richer set of states.
+ */
+trait Call {
+  def sid: String
+  def from: Phonenumber
+  def to: Phonenumber
+
+  /**
+   * If machine detection is used for an outgoing call,
+   * this field will reflect who answered the call (machine or human)
+   */
+  def answeredBy: Option[AnsweredBy]
+}
+
+/**
+ *  Represents an active, ongoing call. In- or out-going.
  */
 case class ActiveCall(
      sid: String,
      from: Phonenumber,
      to: Phonenumber,
-     status: CallStatus,
+     status: ActiveCallStatus,
      forwardedFrom: Option[Phonenumber],
      answeredBy: Option[AnsweredBy],
      digits: Option[String]
-   ) extends CallbackEvent
+   ) extends Call with CallbackEvent
 
 object ActiveCall {
   def parse(p: Map[String, String]) = {
@@ -45,36 +62,20 @@ object ActiveCall {
 }
 
 /**
- * Event triggered when an incoming SMS is received.
+ * Represents a completed call.
  */
-case class IncomingSms(sid: String, from: Phonenumber, to: Phonenumber, body: String) extends CallbackEvent
-
-object IncomingSms {
-  def parse(p: Map[String, String]) = {
-    IncomingSms(
-      p("SmsSid"),
-      Phonenumber(p("From")),
-      Phonenumber(p("To")),
-      p("Body")
-    )
-  }
-}
-
-/**
- * Represents the result of a outgoing dial operation.
- */
-case class DialOutcome(
+case class CompletedCall(
     sid: String,
     from: Phonenumber,
     to: Phonenumber,
-    status: DialOutcomeStatus,
+    status: CompletedCallStatus,
     answeredBy: Option[AnsweredBy],
     duration: Int
-  ) extends CallbackEvent
+  ) extends Call with CallbackEvent
 
-object DialOutcome {
+object CompletedCall {
   def parse(p: Map[String, String]) = {
-       DialOutcome(
+       CompletedCall(
          p("CallSid"),
          Phonenumber(p("From")),
          Phonenumber(p("To")),
@@ -98,30 +99,49 @@ object DialOutcome {
 }
 
 /**
- * Status of a call.
+ * Status of an active call.
  */
-sealed trait CallStatus
-case object Queued extends CallStatus
-case object Ringing extends CallStatus
-case object InProgress extends CallStatus
+sealed trait ActiveCallStatus
+case object Queued extends ActiveCallStatus
+case object Ringing extends ActiveCallStatus
+case object InProgress extends ActiveCallStatus
+case object Ended extends ActiveCallStatus
+
 
 /**
- * Call statuses which can be dial outcomes.
+ * Status of a completed call. For calls which originally were
+ * incoming, this will always be just Completed. For outgoing calls
+ * all states are relevant.
  */
-sealed trait DialOutcomeStatus
-
-case object Completed extends DialOutcomeStatus
-case object Busy extends DialOutcomeStatus
-case object Failed extends DialOutcomeStatus
-case object NoAnswer extends DialOutcomeStatus
-
-
-sealed trait CallDirection
-case object Inbound extends CallDirection
-case object Outbound extends CallDirection
+sealed trait CompletedCallStatus
+case object Completed extends CompletedCallStatus
+case object Busy extends CompletedCallStatus
+case object Failed extends CompletedCallStatus
+case object NoAnswer extends CompletedCallStatus
 
 sealed trait AnsweredBy
 case object Human extends AnsweredBy
 case object Machine extends AnsweredBy
 
-case class Unknown(msg: String) extends CallStatus with DialOutcomeStatus with AnsweredBy
+/**
+ * Safe-guard in case Twilio extends it's API.
+ */
+case class Unknown(msg: String) extends ActiveCallStatus with CompletedCallStatus with AnsweredBy
+
+
+/**
+ * Event triggered when an incoming SMS is received.
+ */
+case class IncomingSms(sid: String, from: Phonenumber, to: Phonenumber, body: String) extends CallbackEvent
+
+object IncomingSms {
+  def parse(p: Map[String, String]) = {
+    IncomingSms(
+      p("SmsSid"),
+      Phonenumber(p("From")),
+      Phonenumber(p("To")),
+      p("Body")
+    )
+  }
+}
+

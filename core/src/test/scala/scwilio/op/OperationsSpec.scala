@@ -194,7 +194,7 @@ object OperationsSpec extends Specification {
               </TwilioResponse>
 
       val p = new GetConferenceParticipantInfo(null).parse(res)
-      p must_== Participant("CA386025c9bf5d6052a1d1ea42b4d16662", true)
+      p must_== ConferenceParticipant("CA386025c9bf5d6052a1d1ea42b4d16662", true)
     }
   }
 }

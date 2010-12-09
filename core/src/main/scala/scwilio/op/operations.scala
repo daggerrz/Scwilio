@@ -1,5 +1,5 @@
-package scwilio
-package op
+package scwilio {
+package op {
 
 import xml._
 
@@ -216,12 +216,13 @@ case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[Tup
 /**
  * Get info about a particular conference participant.
  */
-case class GetConferenceParticipantInfo(uri: String) extends TwilioOperation[Participant] {
+case class GetConferenceParticipantInfo(uri: String) extends TwilioOperation[ConferenceParticipant] {
   def request(conf: HttpConfig) = conf.TWILIO_BASE / uri
 
   def parser = parse
   def parse(res: NodeSeq) = {
     val part = res \ "Participant"
-    Participant((part \ "CallSid").text, if ("true" == (part \ "Muted").text) true else false)
+    ConferenceParticipant((part \ "CallSid").text, if ("true" == (part \ "Muted").text) true else false)
   }
 }
+}}
