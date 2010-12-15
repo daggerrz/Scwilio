@@ -7,16 +7,17 @@ import callback._
 import util.Logging
 
 object DemoPhone {
-  def apply() = {
-    val port = 8080
+  def apply(port: Int) = {
     val urlBase = "http://" + IPTool.publicIp + ":" + port
-    new UnfilteredPhone(urlBase, port)
+    new UnfilteredPhone(urlBase)
   }
 }
 
 object ConferenceDemo extends Application with Logging {
 
-  val phone = DemoPhone()
+  val port = 8080
+  val phone = DemoPhone(port)
+  private val http = unfiltered.jetty.Http(port).filter(phone.callBackPlan).start
 
   // Import to enable function references to be implicitly converted into
   // Unfiltered HTTP callbacks.
@@ -72,7 +73,9 @@ object ConferenceDemo extends Application with Logging {
 
 object StatefulDialDemo extends Application {
 
-  val phone = DemoPhone()
+  val port = 8080
+  val phone = DemoPhone(8080)
+  private val http = unfiltered.jetty.Http(port).filter(phone.callBackPlan).start
 
   // Import to enable function references to be implicitly converted into
   // Unfiltered HTTP callbacks.

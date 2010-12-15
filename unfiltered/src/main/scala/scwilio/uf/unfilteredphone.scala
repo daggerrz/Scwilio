@@ -13,10 +13,10 @@ import functions._
 /**
  * An implementation of a Phone device using the Unfiltered Jetty implementation.
  */
-class UnfilteredPhone(val absoluteUrlBase: String, val port: Int) extends Phone with InMemoryCallbackManager with Logging {
+class UnfilteredPhone(val absoluteUrlBase: String) extends Phone with InMemoryCallbackManager with Logging {
 
-  private val http = unfiltered.jetty.Http(port).filter(CallbackPlan()).start
 
+  def callBackPlan = CallbackPlan()
   /**
    * Unfiltered plan for handling callbacks
    */
