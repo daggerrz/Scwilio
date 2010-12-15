@@ -6,7 +6,7 @@ import util._
 
 /**
  * Represents a phone device. Must be mixed with a CallbackManager to handle
- * callback functions. See scwilio.uf.Server for an example.
+ * callback functions. See scwilio.uf.UnfilteredPhone for an example.
  */
 trait Phone { self: CallbackManager with Logging =>
 
