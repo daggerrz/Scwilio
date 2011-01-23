@@ -24,16 +24,16 @@ class UnfilteredPhone(val absoluteUrlBase: String) extends Phone with InMemoryCa
     def apply() = unfiltered.filter.Planify(intent)
 
     def intent : unfiltered.filter.Plan.Intent = {
-      case POST(Path(Seg("incoming" :: "voice" :: Nil), Params(p, _))) =>
+      case POST(Path(Seg("incoming" :: "voice" :: Nil)) & Params(p)) =>
         handleIncomingCall(ActiveCall.parse(p))
 
-      case POST(Path(Seg("callback" :: "noparam" :: fid :: Nil), _)) =>
+      case POST(Path(Seg("callback" :: "noparam" :: fid :: Nil))) =>
         handleNoParam(fid)
 
-      case POST(Path(Seg("callback" :: "callconnected" :: fid :: Nil), Params(p, _))) =>
+      case POST(Path(Seg("callback" :: "callconnected" :: fid :: Nil)) & Params(p)) =>
         handleCallStatus(fid, ActiveCall.parse(p))
 
-      case POST(Path(Seg("callback" :: "callended" :: fid :: Nil), Params(p, _))) =>
+      case POST(Path(Seg("callback" :: "callended" :: fid :: Nil)) & Params(p)) =>
         handleCallEnded(fid, CompletedCall.parse(p))
         Ok
 

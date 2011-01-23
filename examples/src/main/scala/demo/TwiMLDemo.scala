@@ -17,14 +17,14 @@ object TwiMLDemo extends Application {
   implicit def string2Option(s: String) : Option[String] = Some(s)
 
   unfiltered.jetty.Http(DemoConfig.port).filter(unfiltered.filter.Planify {
-       case Path("/outgoing", req) =>
+       case Path("/outgoing") =>
            VoiceResponse(
              Say("Hello there! Please enter your 4 digit secret code followed by star"),
              Gather(numDigits = 4,  finishOnKey = '*', timeout = 5, onGathered = AbsoluteUrl("/digits")),
              Say("Sorry, you are too slow for us. Bye."),
              Hangup
            )
-       case Path("/digits", Params(params, req)) =>
+       case Path("/digits") & Params(params) =>
          params("Digits") match {
            case Seq(digits) =>
              VoiceResponse(

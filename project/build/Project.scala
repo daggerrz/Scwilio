@@ -6,6 +6,8 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
   val LOGBACK_VERSION = "0.9.24"
   val SLF4J_VERSION = "1.6.1"
 
+  lazy val publishTo = Resolver.file("Local Maven repository", new java.io.File(Path.userHome+"/.m2/repository"))
+  override def managedStyle = ManagedStyle.Maven
 
   class ScwilioModule(info: ProjectInfo) extends DefaultProject(info) {
 
@@ -33,8 +35,8 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
   }
 
   class Unfiltered(info: ProjectInfo) extends ScwilioModule(info) {
-    lazy val ufJetty = "net.databinder" %% "unfiltered-jetty" % "0.2.3-SNAPSHOT"
-    lazy val ufFilter = "net.databinder" %% "unfiltered-filter" % "0.2.3-SNAPSHOT"
+    lazy val ufJetty = "net.databinder" %% "unfiltered-jetty" % "0.3.1"
+    lazy val ufFilter = "net.databinder" %% "unfiltered-filter" % "0.3.1"
 
   }
 
