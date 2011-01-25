@@ -32,7 +32,7 @@ object TwiML {
 
     case dial: Dial =>
        <Dial callerId={dial.from.toStandardFormat}
-             action={dial.onConnect.getOrElse("")}
+             action={dial.onEnd.getOrElse("")}
              timeout={dial.timeout.toString}>{dial.to.toStandardFormat}</Dial>
 
     case conf: ConnectToConference =>

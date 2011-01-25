@@ -25,7 +25,7 @@ object Verb {
 case class Dial(
    from: Phonenumber,
    to: Phonenumber,
-   onConnect: Option[String] = None,
+   onEnd: Option[String] = None,
    timeout: Int = 30
  ) extends Verb
 
