@@ -93,7 +93,7 @@ object CompletedCall {
            case Some(s) => Some(Unknown(s))
            case None => None
          },
-        p.get("CallDuration") getOrElse("0") toInt
+          p.get("CallDuration").getOrElse(p.get("DialCallDuration").getOrElse("0")).toInt
        )
    }
 }
