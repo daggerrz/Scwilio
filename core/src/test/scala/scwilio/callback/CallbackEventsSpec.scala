@@ -16,7 +16,8 @@ class CallbackEventsSpec extends Specification {
         "Direction" -> "inbound",
         "ForwardedFrom" -> "+14444",
         "AnsweredBy" -> "human",
-        "Digits" -> "555"
+        "Digits" -> "555",
+        "DialCallDuration" -> "1"
       )
 
       ActiveCall.parse(params) must_==
@@ -26,7 +27,8 @@ class CallbackEventsSpec extends Specification {
           Ringing,
           Some(Phonenumber("+14444")),
           Some(Human),
-          Some("555")
+          Some("555"),
+          Some(1)
         )
     }
   }

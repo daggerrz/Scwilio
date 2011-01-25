@@ -33,7 +33,8 @@ case class ActiveCall(
      status: ActiveCallStatus,
      forwardedFrom: Option[Phonenumber],
      answeredBy: Option[AnsweredBy],
-     digits: Option[String]
+     digits: Option[String],
+     duration: Option[Int]
    ) extends Call with CallbackEvent
 
 object ActiveCall {
@@ -56,7 +57,8 @@ object ActiveCall {
           case Some(s) => Some(Unknown(s))
           case None => None
         },
-        p.get("Digits")
+        p.get("Digits"),
+        p.get("DialCallDuration").map(_.toInt)
       )
   }
 }
@@ -93,7 +95,7 @@ object CompletedCall {
            case Some(s) => Some(Unknown(s))
            case None => None
          },
-          p.get("CallDuration").getOrElse(p.get("DialCallDuration").getOrElse("0")).toInt
+          p.get("CallDuration").getOrElse("0").toInt
        )
    }
 }
