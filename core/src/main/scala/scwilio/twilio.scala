@@ -35,7 +35,7 @@ class RestClient(val accountSid: String, val authToken: String) extends HttpConf
 
   def execute[R](op: TwilioOperation[R]) : R  = {
     val req = op.request(this)
-    log.info("Sending req {}", req)
+    log.debug("Sending req {}", req)
     try {
       http(req <> { res =>
         log.debug("Twilio response:\n{}", res)
