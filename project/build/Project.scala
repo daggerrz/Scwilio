@@ -23,7 +23,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
 
   class Core(info: ProjectInfo) extends ScwilioModule(info) {
     override def libraryDependencies = Set(
-      "net.databinder" %% "dispatch-http" % "0.7.7",
+      "net.databinder" %% "dispatch-http" % "0.7.8",
       "org.slf4j" % "slf4j-api" % "1.6.1",
       "ch.qos.logback" % "logback-classic" % "0.9.26",
       "org.scalatest" % "scalatest" % "1.2" % "test",
