@@ -8,3 +8,6 @@ project/build/target
 target
 .DS_Store
 scwilio.properties
+.classpath
+.project
+.scala_dependencies
