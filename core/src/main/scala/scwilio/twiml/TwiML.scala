@@ -14,6 +14,16 @@ object TwiML {
     </Response>
   }
 
+  private implicit def optInt2optString(v: Option[Int]): Option[String] = v match {
+    case Some(i) => Some(i.toString)
+    case _ => None
+  }
+
+  private def optional(v: Option[String]): Option[xml.Text] = v match {
+    case Some(s) => Some(new xml.Text(s))
+    case _ => None
+  }
+
   def apply(verb: Verb) : Node = verb match {
     case say: Say =>
        <Say voice={say.voice.value} loop={say.loop.toString} language={say.language.value}>{say.what}</Say>
@@ -32,22 +42,23 @@ object TwiML {
 
     case dial: Dial =>
        <Dial callerId={dial.from.toStandardFormat}
-             action={dial.onConnect.getOrElse("")}
-             timeout={dial.timeout.toString}>{dial.to.toStandardFormat}</Dial>
+             action={optional(dial.onConnect)}
+             timeout={optional(dial.timeout)}>{dial.to.toStandardFormat}</Dial>
 
     case conf: ConnectToConference =>
-      <Dial action={conf.onLeave.getOrElse("")}>
-        <Conference waitUrl={conf.onWait.getOrElse("")}
+      <Dial action={optional(conf.onLeave)}>
+        <Conference waitUrl={optional(conf.onWait)}
           muted={conf.muted.toString}
           startConferenceOnEnter={conf.startOnEnter.toString}
           endConferenceOnExit={conf.endOnExit.toString}>{conf.cid}</Conference>
       </Dial>
+
     case gather: Gather =>
-        <Gather action={gather.onGathered.getOrElse("")}
+        <Gather action={optional(gather.onGathered)}
                 finishOnKey={gather.finishOnKey.toString}
                 numDigits={gather.numDigits.toString} timeout={gather.timeout.toString}/>
+
     case redirect: Redirect =>
         <Redirect>{redirect.to}</Redirect>
   }
-
 }
