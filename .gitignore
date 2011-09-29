@@ -11,3 +11,4 @@ scwilio.properties
 .classpath
 .project
 .scala_dependencies
+.target
