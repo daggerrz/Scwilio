@@ -1,7 +1,7 @@
 name := "Scwilio Core"
 
 libraryDependencies ++= Seq(
-  "net.databinder" %% "dispatch-http" % "0.7.8",
+  "net.databinder" %% "dispatch-http" % "0.8.5",
   "org.slf4j" % "slf4j-api" % "1.6.1",
   "ch.qos.logback" % "logback-classic" % "0.9.26",
   "org.scalatest" % "scalatest" % "1.2" % "test",
