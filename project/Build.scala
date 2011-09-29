@@ -7,7 +7,7 @@ object BuildSettings {
   val buildScalaVersion = "2.9.1"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
-    crossScalaVersions := Seq("2.8.0", "2.8.1", "2.9.0-1", "2.9.1"),
+    crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1"),
     organization := buildOrganization,
     version      := buildVersion,
     scalaVersion := buildScalaVersion
