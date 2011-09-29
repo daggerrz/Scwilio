@@ -14,15 +14,7 @@ object TwiML {
     </Response>
   }
 
-  private implicit def optInt2optString(v: Option[Int]): Option[String] = v match {
-    case Some(i) => Some(i.toString)
-    case _ => None
-  }
-
-  private def optional(v: Option[String]): Option[xml.Text] = v match {
-    case Some(s) => Some(new xml.Text(s))
-    case _ => None
-  }
+  private def optional(v: Option[String]): Option[xml.Text] = v map (xml.Text)
 
   def apply(verb: Verb) : Node = verb match {
     case say: Say =>
@@ -43,7 +35,7 @@ object TwiML {
     case dial: Dial =>
        <Dial callerId={dial.from.toStandardFormat}
              action={optional(dial.onConnect)}
-             timeout={optional(dial.timeout)}>{dial.to.toStandardFormat}</Dial>
+             timeout={dial.timeout.toString}>{dial.to.toStandardFormat}</Dial>
 
     case conf: ConnectToConference =>
       <Dial action={optional(conf.onLeave)}>
