@@ -4,9 +4,10 @@ import Keys._
 object BuildSettings {
   val buildOrganization = "org.scwilio"
   val buildVersion      = "0.1.1-SNAPSHOT"
-  val buildScalaVersion = "2.8.1"
+  val buildScalaVersion = "2.9.1"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
+    crossScalaVersions := Seq("2.8.0", "2.8.1", "2.9.0-1", "2.9.1"),
     organization := buildOrganization,
     version      := buildVersion,
     scalaVersion := buildScalaVersion
