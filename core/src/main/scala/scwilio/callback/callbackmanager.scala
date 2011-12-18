@@ -6,7 +6,8 @@ import scwilio.twiml._
 object functions {
   type CallbackFunc[T <: CallbackEvent, R] = (T) => R
   type ActiveCallFunc = (ActiveCall) => VoiceResponse
-  type DialOutcomeFunc = (CompletedCall) => Unit
+  type CallOutcomeFunc = (CompletedCall) => Unit
+  type OutgoingDialOutcomeFunc = (CompletedOutgoingDial) => VoiceResponse
 
   // TODO: This is a hack. Used for waitUrl in ConnectToConfernce (which gives no params)
   // Should have a noop or CID-only callback

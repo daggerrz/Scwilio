@@ -58,4 +58,14 @@ trait Phone { self: CallbackManager with Logging =>
     }
   }
 
+  /**
+   * Callback when an outgoing dial (i.e., via <Dial/>) call ends.
+   */
+  def handleOutgoingDialEnded(fid: String, outcome: CompletedOutgoingDial) : VoiceResponse = {
+    log.debug("Outgoing dial ended: " + outcome)
+    getAndRemove[CompletedOutgoingDial, VoiceResponse](fid) match {
+      case Some(callback) => callback.apply(outcome)
+      case _ => Say("Sorry, an error has occured. Do not know how to handle this call.")
+    }
+  }
 }
