@@ -27,16 +27,18 @@ class UnfilteredPhone(val absoluteUrlBase: String) extends Phone with InMemoryCa
       case POST(Path(Seg("incoming" :: "voice" :: Nil)) & Params(p)) =>
         handleIncomingCall(ActiveCall.parse(p))
 
-      case POST(Path(Seg("callback" :: "noparam" :: fid :: Nil))) =>
+      case POST(Path(Seg("callback" :: "no-param" :: fid :: Nil))) =>
         handleNoParam(fid)
 
-      case POST(Path(Seg("callback" :: "callconnected" :: fid :: Nil)) & Params(p)) =>
+      case POST(Path(Seg("callback" :: "call-connected" :: fid :: Nil)) & Params(p)) =>
         handleCallStatus(fid, ActiveCall.parse(p))
 
-      case POST(Path(Seg("callback" :: "callended" :: fid :: Nil)) & Params(p)) =>
+      case POST(Path(Seg("callback" :: "call-ended" :: fid :: Nil)) & Params(p)) =>
         handleCallEnded(fid, CompletedCall.parse(p))
         Ok
 
+      case POST(Path(Seg("callback" :: "outgoing-dial-ended" :: fid :: Nil)) & Params(p)) =>
+        handleOutgoingDialEnded(fid, CompletedOutgoingDial.parse(p))
     }
   }
 
@@ -51,21 +53,20 @@ class UnfilteredPhone(val absoluteUrlBase: String) extends Phone with InMemoryCa
     implicit def noParamCallFunc2UrlOpt(f: () => VoiceResponse) : Option[String] = {
       def noParams(f: () => VoiceResponse)(x: ActiveCall) = f.apply
       val callback = noParams(f) _
-      makeUrl("/callback/noparam/" + register(callback))
+      makeUrl("/callback/no-param/" + register(callback))
     }
 
-    implicit def noParamCallFunc2Url(f: () => VoiceResponse) : String = {
+    implicit def noParamCallFunc2Url(f: () => VoiceResponse) : String =
       noParamCallFunc2UrlOpt(f).get
-    }
 
-    implicit def activeCallFunc2Url(f: ActiveCallFunc) : Option[String] = {
-      makeUrl("/callback/callconnected/" + register(f))
-    }
+    implicit def activeCallFunc2Url(f: ActiveCallFunc) : Option[String] =
+      makeUrl("/callback/call-connected/" + register(f))
 
-    implicit def dialOutcomeFunc2Url(f: DialOutcomeFunc) : Option[String] = f match {
-        case g: DialOutcomeFunc => makeUrl("/callback/callended/" + register(g))
-        case null => None
-    }
+    implicit def callOutcomeFunc2Url(f: CallOutcomeFunc) : Option[String] =
+      makeUrl("/callback/call-ended/" + register(f))
+
+    implicit def redirectedCallOutcomeFunc2Url(f: OutgoingDialOutcomeFunc) : Option[String] = 
+      makeUrl("/callback/outgoing-dial-ended/" + register(f))
   }
 }
 

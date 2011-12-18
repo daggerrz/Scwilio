@@ -31,7 +31,7 @@ To generate some TwiML, put this in a handler of whatever web framework your're 
                Pause(10),
                Play("http://foo.com/cowbell.mp3"),
                Say("Dialing 8 8 8 8"),
-               Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onConnect = Some("http://test"))
+               Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onEnd = Some("http://test"))
              )
     val stringResponse = TwiML(response).toString
     // Write the response
