@@ -17,7 +17,7 @@ object TwiMLSpec extends Specification {
     }
 
     "generate correct XML for Dial verb - with action url" in { 
-      val r = Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onConnect=Some("http://url"))
+      val r = Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onEnd = Some("http://url"))
       val ml = XML.loadString(TwiML(r).toString) // reload XML to remove whitespace
       val expected = XML.loadString("""<Dial action="http://url" callerId="+1999" timeout="30">+1888</Dial>""")
       ml must_== expected
@@ -29,7 +29,7 @@ object TwiMLSpec extends Specification {
           Pause(),
           Play("http://foo.com/cowbell.mp3"),
           Say("Goodbye"),
-          Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onConnect = Some("http://test")),
+          Dial(from = Phonenumber("+1999"), to = Phonenumber("+1888"), onEnd = Some("http://test")),
           ConnectToConference("cid", Some("http://callback"), Some("http://wait"), muted = false, startOnEnter = false, endOnExit = false ),
           Gather(timeout = 30, finishOnKey = '*', numDigits = 4, onGathered = Some("http://digits")),
           Redirect("http://foo.com/")

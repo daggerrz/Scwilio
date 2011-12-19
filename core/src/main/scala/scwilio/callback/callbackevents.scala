@@ -64,7 +64,8 @@ object ActiveCall {
 }
 
 /**
- * Represents a completed call.
+ * Represents a completed call. It maybe an incoming call or an outgoing call
+ * originated via REST API.
  */
 case class CompletedCall(
     sid: String,
@@ -95,7 +96,58 @@ object CompletedCall {
            case Some(s) => Some(Unknown(s))
            case None => None
          },
-          p.get("CallDuration").getOrElse("0").toInt
+         p.get("CallDuration").getOrElse("0").toInt
+       )
+   }
+}
+
+/**
+ * Represents a completed an outgoing dial. This phone call is part of an
+ * existing active all, i.e., either an incoming call or an outgoing API call.
+ */
+case class CompletedOutgoingDial(
+    sid: String,
+    from: Phonenumber,
+    to: Phonenumber,
+    status: CompletedCallStatus,
+    answeredBy: Option[AnsweredBy],
+    duration: Int,
+    dialedCallSid: String,
+    dialedCallStatus: CompletedCallStatus,
+    dialedCallDuration: Int
+  ) extends Call with CallbackEvent
+
+object CompletedOutgoingDial {
+  def parse(p: Map[String, String]) = {
+       CompletedOutgoingDial(
+         p("CallSid"),
+         Phonenumber(p("From")),
+         Phonenumber(p("To")),
+         p.get("CallStatus") match {
+           case Some("completed") => Completed
+           case Some("busy") => Busy
+           case Some("no-answer") => NoAnswer
+           case Some("failed") => Failed
+           case Some(s) => Unknown(s)
+           case None => Unknown("no status")
+         },
+         p.get("AnsweredBy") match {
+           case Some("human") => Some(Human)
+           case Some("machine") => Some(Machine)
+           case Some(s) => Some(Unknown(s))
+           case None => None
+         },
+         p.get("CallDuration").getOrElse("0").toInt,
+         p("DialCallSid"),
+         p.get("DialCallStatus") match {
+           case Some("completed") => Completed
+           case Some("busy") => Busy
+           case Some("no-answer") => NoAnswer
+           case Some("failed") => Failed
+           case Some(s) => Unknown(s)
+           case None => Unknown("no status")
+         },
+         p.get("DialCallDuration").getOrElse("0").toInt
        )
    }
 }
@@ -108,7 +160,6 @@ case object Queued extends ActiveCallStatus
 case object Ringing extends ActiveCallStatus
 case object InProgress extends ActiveCallStatus
 case object Ended extends ActiveCallStatus
-
 
 /**
  * Status of a completed call. For calls which originally were
