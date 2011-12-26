@@ -19,6 +19,8 @@ object Verb {
   implicit def singleVerb2VoiceResponse(v: Verb) : VoiceResponse = VoiceResponse(v)
 }
 
+trait NestableVerb extends Verb
+
 /**
  * Dials a number. Can be used both as a op and a response.
  */
@@ -44,14 +46,14 @@ case class ConnectToConference(
 /**
  * Say something to the caller using TTS.
  */
-case class Say(what: String, language: Language = Language.English, voice: Voice = Voice.Man, loop: Int = 1) extends Verb
+case class Say(what: String, language: Language = Language.English, voice: Voice = Voice.Man, loop: Int = 1) extends NestableVerb
 
 /**
  * Play an audio recording to the caller.
  */
-case class Play(audioUrl: String, loop: Int = 1) extends Verb
+case class Play(audioUrl: String, loop: Int = 1) extends NestableVerb
 
-case class Pause(seconds: Int = 1) extends Verb
+case class Pause(seconds: Int = 1) extends NestableVerb
 
 case class Redirect(to: String) extends Verb
 
@@ -61,6 +63,7 @@ case class Gather(
     numDigits: Int = Integer.MAX_VALUE,
     finishOnKey: Char = '#',
     onGathered: Option[String] = None,
+    nestedVerbs: List[NestableVerb] = List(),
     timeout: Int = 5
   ) extends Verb
 

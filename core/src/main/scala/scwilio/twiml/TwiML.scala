@@ -8,7 +8,7 @@ import scala.xml._
  */
 object TwiML {
 
-  def apply(response: VoiceResponse) : Node = {
+  def apply(response: VoiceResponse) : Elem = {
     <Response>
       { for (verb <- response.verbs) yield TwiML(verb) }
     </Response>
@@ -16,7 +16,7 @@ object TwiML {
 
   private def optional(v: Option[String]): Option[xml.Text] = v map (xml.Text)
 
-  def apply(verb: Verb) : Node = verb match {
+  def apply(verb: Verb) : Elem = verb match {
     case say: Say =>
        <Say voice={say.voice.value} loop={say.loop.toString} language={say.language.value}>{say.what}</Say>
 
@@ -48,7 +48,8 @@ object TwiML {
     case gather: Gather =>
         <Gather action={optional(gather.onGathered)}
                 finishOnKey={gather.finishOnKey.toString}
-                numDigits={gather.numDigits.toString} timeout={gather.timeout.toString}/>
+                numDigits={gather.numDigits.toString}
+                timeout={gather.timeout.toString}>{ for (verb <- gather.nestedVerbs) yield TwiML(verb) }</Gather>
 
     case redirect: Redirect =>
         <Redirect>{redirect.to}</Redirect>
