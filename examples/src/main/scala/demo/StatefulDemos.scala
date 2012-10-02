@@ -67,7 +67,7 @@ object ConferenceDemo extends Application with Logging {
     waitInfo
   }
 
-  phone.incomingCallHandler = Some(selectConference _)
+  phone.callHandler = Some(selectConference _)
 
 }
 
