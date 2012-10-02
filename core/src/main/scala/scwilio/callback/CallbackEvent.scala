@@ -50,7 +50,7 @@ object ActiveCall {
           case Some(s) => Unknown(s)
           case None => Unknown("no status")
         },
-        Phonenumber(p.get("ForwardedFrom")),
+        p.get("ForwardedFrom").map(Phonenumber.parse),
         p.get("AnsweredBy") match {
           case Some("human") => Some(Human)
           case Some("machine") => Some(Machine)

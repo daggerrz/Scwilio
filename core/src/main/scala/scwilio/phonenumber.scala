@@ -19,7 +19,7 @@ case class Phonenumber(countryCode: String, number: String) {
 	 *
 	 * @return
 	 */
-	def toStandardFormat = "+" + countryCode + number
+	lazy val toStandardFormat = "+" + countryCode + number
 
 	override def toString = toStandardFormat
 
@@ -27,10 +27,6 @@ case class Phonenumber(countryCode: String, number: String) {
 
 object Phonenumber {
   def apply(number: String) : Phonenumber = parse(number)
-  def apply(number: Option[String]) : Option[Phonenumber] = number match {
-    case Some(num) => Some(parse(num))
-    case None => None
-  }
   def parse(string: String) = PhonenumberParser.parse(string)
 
   implicit def string2Phonenumber(number: String) : Phonenumber = Phonenumber.apply(number)
@@ -62,17 +58,6 @@ object PhonenumberParser {
 
 		parseAndDetermineCountryCodeIfPresent(trimmed)
 	}
-
-  /**
-   * Parse a phonenumber if it is paresable.
-   */
-  def parseOption(number: String) : Option[Phonenumber] = {
-    try {
-      Some(parse(number))
-    } catch {
-      case e: IllegalArgumentException => None
-    }
-  }
 
 	private def parseAndDetermineCountryCodeIfPresent(number: String) : Phonenumber = {
 		if (number.startsWith("+")) {
@@ -114,7 +99,7 @@ object PhonenumberParser {
 		 new Phonenumber(countryCode, number)
 	}
 
-	private val countryCodes = Map(
+	private final val countryCodes = Map(
 		"355" -> "Albania",
 		"213" -> "Algeria",
 		"376" -> "Andorra",

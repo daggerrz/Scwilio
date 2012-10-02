@@ -43,7 +43,7 @@ object OperationsSpec extends Specification {
                       </AvailablePhoneNumber>
                   </AvailablePhoneNumbers>
                  </TwilioResponse>
-      val numbers = new ListAvailableNumbers(null).parse(res)
+      val numbers = new ListAvailableNumbers(null).parser(res)
       numbers.size must_== 2
     }
   }
@@ -171,7 +171,7 @@ object OperationsSpec extends Specification {
                   </Conference>
                 </TwilioResponse>
 
-      val (state, uris) = new GetConferenceParticipantURIs(null).parse(res)
+      val (state, uris) = new GetConferenceParticipantURIs(null).parser(res)
       state must_== "completed"
       uris.size must_== 1
       uris.head must_== "/2010-04-01/Accounts/AC5ef872f6da5a21de157d80997a64bd33/Conferences/CFbbe46ff1274e283f7e3ac1df0072ab39/Participants"
@@ -193,7 +193,7 @@ object OperationsSpec extends Specification {
                   </Participant>
               </TwilioResponse>
 
-      val p = new GetConferenceParticipantInfo(null).parse(res)
+      val p = new GetConferenceParticipantInfo(null).parser(res)
       p must_== ConferenceParticipant("CA386025c9bf5d6052a1d1ea42b4d16662", true)
     }
   }

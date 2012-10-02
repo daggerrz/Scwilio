@@ -13,27 +13,23 @@ trait Phone { self: CallbackManager with Logging =>
   /**
    * Set this to handle incoming calls.
    */
-  var incomingCallHandler: Option[(ActiveCall) => VoiceResponse] = None
+  def incomingCallHandler: (ActiveCall) => VoiceResponse
 
   /**
    * Called when an incoming call arrives.
    */
   def handleIncomingCall(call: ActiveCall) : VoiceResponse = {
     log.debug("Incoming call: " + call)
-    incomingCallHandler match {
-      case Some(f) => f.apply(call)
-      case _ => Say("Hello, thanks for calling, but incoming calls are not supported by this server.")
-    }
+    incomingCallHandler(call)
   }
 
   /**
    * Called when a no-param callback is invoked. An example is waitUrl for conference calls.
    */
   def handleNoParam(fid: String) : VoiceResponse = {
-    getAndRemove[ActiveCall, VoiceResponse](fid) match {
-      case Some(callback) => callback.apply(null)
-      case _ => Say("Sorry, an error has occured. Do not know how to handle this callback.")
-    }
+    getAndRemove[ActiveCall, VoiceResponse](fid).map(_.apply(null)).getOrElse(
+      Say("Sorry, an error has occured. Do not know how to handle this callback.")
+    )
   }
 
   /**
@@ -41,10 +37,9 @@ trait Phone { self: CallbackManager with Logging =>
    */
   def handleCallStatus(fid: String, call: ActiveCall) : VoiceResponse = {
     log.debug("Call connected: " + call)
-    getAndRemove[ActiveCall, VoiceResponse](fid) match {
-      case Some(callback) => callback.apply(call)
-      case _ => Say("Sorry, an error has occured. Do not know how to handle this call.")
-    }
+    getAndRemove[ActiveCall, VoiceResponse](fid).map(_.apply(call)).getOrElse(
+      Say("Sorry, an error has occured. Do not know how to handle this call.")
+    )
   }
 
   /**
@@ -52,10 +47,7 @@ trait Phone { self: CallbackManager with Logging =>
    */
   def handleCallEnded(fid: String, outcome: CompletedCall) : Unit = {
     log.debug("Call ended: " + outcome)
-    getAndRemove[CompletedCall, VoiceResponse](fid) match {
-      case Some(callback) => callback.apply(outcome)
-      case _ => log.warn("No handler for call end " + fid)
-    }
+    getAndRemove[CompletedCall, VoiceResponse](fid).foreach(_.apply(outcome))
   }
 
   /**
@@ -63,9 +55,8 @@ trait Phone { self: CallbackManager with Logging =>
    */
   def handleOutgoingDialEnded(fid: String, outcome: CompletedOutgoingDial) : VoiceResponse = {
     log.debug("Outgoing dial ended: " + outcome)
-    getAndRemove[CompletedOutgoingDial, VoiceResponse](fid) match {
-      case Some(callback) => callback.apply(outcome)
-      case _ => Say("Sorry, an error has occured. Do not know how to handle this call.")
-    }
+    getAndRemove[CompletedOutgoingDial, VoiceResponse](fid).map(_.apply(outcome)).getOrElse(
+      Say("Sorry, an error has occured. Do not know how to handle this call.")
+    )
   }
 }

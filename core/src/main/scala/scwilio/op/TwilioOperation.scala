@@ -1,5 +1,5 @@
-package scwilio {
-package op {
+package scwilio.op
+import scwilio._
 
 import xml._
 
@@ -52,9 +52,7 @@ protected object XmlPredef {
 case class ListAvailableNumbers(countryCode: String) extends TwilioOperation[Seq[Phonenumber]] {
   def request(conf: HttpConfig) = conf.API_BASE / "AvailablePhoneNumbers" / countryCode / "Local"
 
-  def parser = parse _
-
-  def parse(nodes: NodeSeq) = {
+  val parser = { nodes: NodeSeq =>
     for (num <- nodes \\ "AvailablePhoneNumber" \ "PhoneNumber")
     yield {
       Phonenumber(num.text)
@@ -83,19 +81,18 @@ case class DialOperation(
   ) extends TwilioOperation[CallInfo] {
 
   def request(conf: HttpConfig) = {
-    var params = Map(
+    val params = Map(
       "From" -> from.toStandardFormat,
       "To" -> to.toStandardFormat
-    )
-    callbackUrl.foreach(params += "Url" -> _)
-    statusCallbackUrl.foreach(params += "StatusCallback" -> _)
-    if (machineDetection) params += "IfMachine" -> "Continue"
-
+    ) ++
+      callbackUrl.map("Url" -> _) ++
+      statusCallbackUrl.map("StatusCallback" -> _) ++
+      (if (machineDetection) Some("IfMachine" -> "Continue") else None)
 
     conf.API_BASE / "Calls" << params
   }
 
-  def parser = DialOperation.parse
+  def parser = DialOperation.parse _
 }
 
 object DialOperation {
@@ -122,7 +119,7 @@ case class SendSms(from: Phonenumber, to: Phonenumber, body: String) extends Twi
     conf.API_BASE / "SMS" / "Messages" << params
   }
 
-  def parser = SendSms.parse
+  def parser = SendSms.parse _
 }
 
 object SendSms {
@@ -146,14 +143,7 @@ object SendSms {
  */
 case class UpdateIncomingNumberConfig(sid: String, config: IncomingNumberConfig) extends TwilioOperation[IncomingNumber] {
   def request(conf: HttpConfig) = {
-    var params = Map(
-      "ApiVersion" -> Twilio.API_VERSION,
-      "VoiceMethod" -> "POST",
-      "VoiceFallbackMethod" -> "POST",
-      "StatusCallbackMethod" -> "POST",
-      "SmsMethod" -> "POST",
-      "SmsFallbackMethod" -> "POST"
-    )
+
     val options = List(
       (config.friendlyName -> "FriendlyName"),
       (config.voiceUrl ->"VoiceUrl"),
@@ -161,10 +151,16 @@ case class UpdateIncomingNumberConfig(sid: String, config: IncomingNumberConfig)
       (config.smsUrl -> "SmsUrl"),
       (config.smsFallbackUrl -> "SmsFallbackUrl")
     )
-    params ++= options.flatMap {
-      case (Some(opt), setting) => List(setting -> opt)
-      case _ => Nil
-    }
+
+    val params = Map(
+      "ApiVersion" -> Twilio.API_VERSION,
+      "VoiceMethod" -> "POST",
+      "VoiceFallbackMethod" -> "POST",
+      "StatusCallbackMethod" -> "POST",
+      "SmsMethod" -> "POST",
+      "SmsFallbackMethod" -> "POST"
+    ) ++ options.flatMap{ case (value, optionName) => value.map(optionName -> _) }
+
     conf.API_BASE / "IncomingPhoneNumbers" / sid << params
   }
 
@@ -196,21 +192,20 @@ object IncomingNumbersParser {
  */
 case object ListIncomingNumbers extends TwilioOperation[Seq[IncomingNumber]] {
   def request(conf: HttpConfig) = conf.API_BASE / "IncomingPhoneNumbers"
-  def parser = IncomingNumbersParser.parse
+  def parser = IncomingNumbersParser.parse _
 }
 
 /**
  * Get the URIs for the participants resources in a conference.
  */
-case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[Tuple2[String, Seq[String]]] {
+case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[(String, Seq[String])] {
   def request(conf: HttpConfig) = conf.API_BASE / "Conferences" / cid
 
-  def parser = parse
-
-  def parse(res: NodeSeq) = {
+  def parser = { res: NodeSeq =>
     val conf = res \ "Conference"
     (conf \ "Status").text -> (conf \ "SubresourceUris" \ "Participants").map{ _.text }
   }
+
 }
 
 /**
@@ -219,10 +214,8 @@ case class GetConferenceParticipantURIs(cid: String) extends TwilioOperation[Tup
 case class GetConferenceParticipantInfo(uri: String) extends TwilioOperation[ConferenceParticipant] {
   def request(conf: HttpConfig) = conf.TWILIO_BASE / uri
 
-  def parser = parse
-  def parse(res: NodeSeq) = {
+  def parser = { res: NodeSeq =>
     val part = res \ "Participant"
     ConferenceParticipant((part \ "CallSid").text, if ("true" == (part \ "Muted").text) true else false)
   }
 }
-}}
